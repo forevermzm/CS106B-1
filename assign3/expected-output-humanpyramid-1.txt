@@ -1,0 +1,38 @@
+CS 106B Recursion Problems
+
+Choose a problem:
+1) Karel Goes Home
+2) Convert String to Integer
+3) Balancing Parentheses
+4) Human Pyramid
+5) Sierpinski Triangle
+6) Flood Fill
+7) Grammar Solver
+Enter your choice (or 0 to quit): 4
+
+How many people are on the bottom row? 5
+Each person's own weight:
+96.96 
+133.74 121.16 
+128.97 73.79 146.37 
+52.15 124.21 110.07 77.03 
+110.41 111.62 75.03 124.53 117.36 
+
+Weight on each person's knees:
+96.96 
+182.22 169.64 
+220.08 249.72 231.19 
+162.20 359.11 350.53 192.63 
+191.51 372.27 429.85 396.10 213.68 
+
+Choose a problem:
+1) Karel Goes Home
+2) Convert String to Integer
+3) Balancing Parentheses
+4) Human Pyramid
+5) Sierpinski Triangle
+6) Flood Fill
+7) Grammar Solver
+Enter your choice (or 0 to quit): 0
+
+Exiting.

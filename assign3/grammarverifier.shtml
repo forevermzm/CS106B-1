@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!--
+		Copyright notice:
+		This file and all linked documents are, unless otherwise specified, authored by Marty Stepp and/or Stanford University, and may not be copied, redistributed, or modified without explicit permission of the course instructor.
+		-->
+		<title>CS 106B: Programming Abstractions in C++(none)</title>
+
+		<meta charset="utf-8" />
+		<meta name="author" content="Marty Stepp" />
+		<meta name="description" content="Course web site for CS106B, ." />
+		<meta name="keywords" content="programming, abstractions, C++, Marty Stepp, CS 106B, Stanford University, computer science" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
+		
+		<meta id="WEEK1_SUN" name="WEEK1_SUN" content="Jun 22 2014 12:00 AM" />
+
+		<!-- stop the web browser from ever caching this page or its images -->
+		<meta http-equiv="Cache-Control" content="no-cache" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+
+		<link href="style.css" type="text/css" rel="stylesheet" />
+		<link href="images/stanford-favicon.png" type="image/png" rel="shortcut icon" />
+		<link href="images/stanford-favicon.png" type="image/png" rel="icon" />
+
+		<script src="//ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js" type="text/javascript"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/scriptaculous/1.9.0/scriptaculous.js" type="text/javascript"></script>
+		<script src="sorttable.js" type="text/javascript"></script>
+		<script src="cs.js" type="text/javascript"></script>
+	</head>
+
+	<body>
+		<div id="container">
+			<div id="header" class="contentsection">
+				<div class="titles">
+					<div class="logo">
+						<a href="http://www.cs.stanford.edu/"><img src="images/stanford-cs-logo.png" alt="Stanford CS logo" /></a>
+					</div>
+
+					<h1>
+						CS 106B: Programming Abstractions in C++ <br />
+						Summer 2014
+					</h1>
+				</div>
+			</div>
+
+			<hr class="stanfordhr1" />
+			<hr class="stanfordhr2" />
+			
+			<!--
+			<div class="excitingnews">
+				Looking for last quarter's course web site?
+				Click here for the <a href="http://stanford.edu/class/archive/cs/cs106b/cs106b.1142/">CS 106B, Autumn 2013</a> course web site.
+			</div>
+			-->
+
+			<div id="sidebar">
+				<div>
+					<h2>CS 106B</h2>
+					<ul>
+						<li><a href="index.shtml"><img src="images/home_icon.png" class="sidebaricon" alt="main" /> Home</a></li>
+						<li><a href="textbook.shtml"><img src="images/textbook_icon.png" class="sidebaricon" alt="textbook" /> Textbook</a></li>
+						<li><a href="faq.shtml"><img src="images/faq_icon.png" class="sidebaricon" alt="FAQ" /> FAQ</a> / <a href="links.shtml"><img src="images/links_icon.png" class="sidebaricon" alt="links" /> Links</a></li>
+						<li><a href="handouts.shtml"><img src="images/syllabus_icon.png" class="icon" alt="icon" /> Handouts</a></li>
+					</ul>
+				</div>
+
+				<div>
+					<h2>Course Info</h2>
+					<ul>
+						<li><a href="lectures.shtml#today"><img src="images/lectures_icon.png" class="sidebaricon" alt="lectures" /> Lectures</a></li>
+						<li><a href="homework.shtml"><img src="images/homework_icon.png" class="sidebaricon" alt="homework" /> Homework</a></li>
+						<li><a href="sections.shtml"><img src="images/labs_icon.png" class="sidebaricon" alt="sections" /> Sections</a></li>
+						<li><a href="exams.shtml"><img src="images/exams_icon.png" class="sidebaricon" alt="exams" /> Exams</a></li>
+					</ul>
+				</div>
+
+
+				<div>
+					<h2>Getting Help</h2>
+					<ul>
+						<li><a href="staff.shtml"><img src="images/staff_icon.png" class="sidebaricon" alt="staff" /> Staff/SLs</a></li>
+						<li><a class="popup" href="https://cs198.stanford.edu/cs106/LairHelp/HelperSchedule.aspx"><img src="images/lab_schedule_icon.png" class="sidebaricon" alt="lab schedule" /> LaIR Hours</a></li>
+						<li><a class="popup" href="https://piazza.com/class/huopugs6kcs6ov"><img src="images/piazza-icon.png" class="sidebaricon" alt="message board" /> Message Forum</a></li>
+						<li><a href="working-at-home.shtml"><img src="images/working_at_home_icon.png" class="sidebaricon" alt="working at home" /> Work@Home</a></li>
+					</ul>
+				</div>
+
+				<div>
+					<h2>Documentation</h2>
+					<ul>
+						<li><a class="popup" href="http://stanford.edu/~stepp/cppdoc/"><img src="images/stanford-favicon.png" class="icon" alt="icon" /> <strong>Stanford C++ Lib</strong></a></li>
+						<li><a class="popup" href="http://www.cppreference.com/"><img src="images/icon_cppreference.gif" class="icon" alt="icon" /> CppReference.com</a></li>
+						<li><a class="popup" href="http://www.cplusplus.com/reference/"><img src="images/icon_cplusplus.gif" class="icon" alt="icon" /> CPlusPlus.com</a></li>
+						<li><a href="styleguide.shtml"><img src="images/gradeit_icon.gif" class="icon" alt="icon" /> 106B Style Guide</a></li>
+					</ul>
+				</div>
+			</div>
+			
+			<noscript>
+				<div class="error">
+					<p>
+						ERROR: This site requires JavaScript in order to function properly.
+						You seem to be using a web browser that does not support JavaScript, or you may have a JavaScript blocker such as NoScript installed in your browser.
+						In order to use this course web site, you must enable JavaScript in your browser for this site.
+					</p>
+				</div>
+			</noscript>
+
+			<div class="centerpane">
+
+
+<h2>CS 106B Grammar Verifier</h2>
+
+<p>
+	Paste your <code>sentence.txt</code> output line(s) below to see whether they match the format required by the grammar.
+</p>
+
+<div>
+	<fieldset style="width: 10em; margin-bottom: 1em; margin-right: 2em; float: left;">
+		<legend>Symbol:</legend>
+		<select id="symbol" size="10" style="width: 7em">
+			<option value="&lt;s&gt;" selected="selected">&lt;s&gt;</option>
+			<option value="&lt;np&gt;">&lt;np&gt;</option>
+			<option value="&lt;dp&gt;">&lt;dp&gt;</option>
+			<option value="&lt;adjp&gt;">&lt;adjp&gt;</option>
+			<option value="&lt;adj&gt;">&lt;adj&gt;</option>
+			<option value="&lt;n&gt;">&lt;n&gt;</option>
+			<option value="&lt;pn&gt;">&lt;pn&gt;</option>
+			<option value="&lt;vp&gt;">&lt;vp&gt;</option>
+			<option value="&lt;tv&gt;">&lt;tv&gt;</option>
+			<option value="&lt;iv&gt;">&lt;iv&gt;</option>
+		</select>
+	</fieldset>
+
+	<fieldset style="margin-bottom: 1em; float: left;">
+		<legend>Your <code>generate</code> output:</legend>
+		<textarea id="output" rows="15" cols="80" wrap="off">Elmo wept
+Jane kissed Fred
+</textarea> <br/>
+		<span id="resultmessage">pass</span>
+	</fieldset>
+</div>
+
+<p style="clear: left; padding-top: 2em">
+	Expression evaluator: Paste your expressions.txt <code>E</code> output below to evaluate it to see whether you have created a legal expression.
+</p>
+
+<div>
+	<input id="expression" type="text" size="100" />
+	<button id="evaluate">Evaluate</button> <br />
+	<span id="expressionresult">&nbsp;</span>
+</div>
+
+<script src="grammarverifier.js" type="text/javascript"></script>
+
+				<div id="w3c">
+					<div class="copyrightnotice">
+						This document and its content are copyright &copy; Cynthia Lee and Marty Stepp, 2014.
+						All rights reserved.
+						Any redistribution, reproduction, transmission, or storage of part or all of the contents in any form is prohibited without the authors' expressed written permission.
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="honorcodemessage" class="popupwindow" style="display: none">
+			<div class="popupwindowbody">
+				<h2>Honor Code Reminder:</h2>
+				<p>
+					You are expected to follow the <a class="popup" href="http://honorcode.stanford.edu"><strong>Stanford Honor Code</strong></a>.
+				</p>
+
+				<ul>
+					<li>
+						In your file's comment header, cite <em>all</em> sources of help, including books, web pages, friends, section leaders, etc.
+					</li>
+					<li>
+						Do not consult any assignment solutions that are not your own.
+					</li>
+					<li>
+						Do not attempt to disguise any code that is not your own.
+					</li>
+					<li>
+						Do not give out your assignment solution to another student.
+					</li>
+					<li>
+						Do not post your homework solution code online.  (e.g. PasteBin, DropBox, web forums).
+					</li>
+					<li>
+						Please take steps to ensure that your work is not easily copied by others.
+					</li>
+				</ul>
+				
+				<p>
+					Remember that we run <strong>similarity-detection software</strong> over all solutions,
+					including this quarter and past quarters, as well as any solutions we find on the web.
+				</p>
+
+				<div class="popupwindowbuttons">
+					<button id="honorcodeaccept">
+						<img src="images/icon_ok.gif" alt="icon" />
+						I understand
+					</button>
+					<button id="honorcodecancel">
+						<img src="images/icon_cancel.gif" alt="icon" />
+						Cancel
+					</button>
+				</div>
+
+				<p>
+					<strong>If you need help</strong> solving an assignment, we are happy to help you.
+					You can go to the <a class="popup" href="https://cs198.stanford.edu/cs106/LairHelp/HelperSchedule.aspx">LaIR</a>,
+					or the <a class="popup" href="http://piazza.com/">course message forum</a>,
+					or <a href="staff.shtml">email your section leader</a>,
+					or visit the instructor / head TA during office hours.
+					<strong>You can do it!</strong>
+				</p>
+
+				<p>
+					See <a href="handouts.shtml">Course Information handout</a> for full Honor Code policies, or <a href="staff.shtml">email us</a> if you have any questions.
+				</p>
+			</div>
+		</div>
+		
+		<script>
+			// Google Analytics
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-2729135-9', 'auto');
+			ga('send', 'pageview');
+		</script>
+	</body>
+</html>
+

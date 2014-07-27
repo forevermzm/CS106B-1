@@ -1,0 +1,39 @@
+CS 106B Recursion Problems
+
+Choose a problem:
+1) Karel Goes Home
+2) Convert String to Integer
+3) Balancing Parentheses
+4) Human Pyramid
+5) Sierpinski Triangle
+6) Flood Fill
+7) Grammar Solver
+Enter your choice (or 0 to quit): 2
+
+Enter a string representing an integer (or Q to quit): 345
+string "345" converted into int 345
+Enter a string representing an integer (or Q to quit): 8299567
+string "8299567" converted into int 8299567
+Enter a string representing an integer (or Q to quit): 4
+string "4" converted into int 4
+Enter a string representing an integer (or Q to quit): 9000
+string "9000" converted into int 9000
+Enter a string representing an integer (or Q to quit): 0
+string "0" converted into int 0
+Enter a string representing an integer (or Q to quit): -1
+string "-1" converted into int -1
+Enter a string representing an integer (or Q to quit): -1337
+string "-1337" converted into int -1337
+Enter a string representing an integer (or Q to quit): q
+
+Choose a problem:
+1) Karel Goes Home
+2) Convert String to Integer
+3) Balancing Parentheses
+4) Human Pyramid
+5) Sierpinski Triangle
+6) Flood Fill
+7) Grammar Solver
+Enter your choice (or 0 to quit): 0
+
+Exiting.

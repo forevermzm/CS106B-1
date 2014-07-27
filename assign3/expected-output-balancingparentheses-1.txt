@@ -1,0 +1,53 @@
+CS 106B Recursion Problems
+
+Choose a problem:
+1) Karel Goes Home
+2) Convert String to Integer
+3) Balancing Parentheses
+4) Human Pyramid
+5) Sierpinski Triangle
+6) Flood Fill
+7) Grammar Solver
+Enter your choice (or 0 to quit): 3
+
+Enter a string (or Q to quit): B
+No, that string is not balanced.
+Enter a string (or Q to quit): ()
+Yes, that string is balanced!
+Enter a string (or Q to quit): []
+Yes, that string is balanced!
+Enter a string (or Q to quit): {}
+Yes, that string is balanced!
+Enter a string (or Q to quit): 
+Yes, that string is balanced!
+Enter a string (or Q to quit): [(){}]
+Yes, that string is balanced!
+Enter a string (or Q to quit): [()[]{}({}])
+No, that string is not balanced.
+Enter a string (or Q to quit): [[[]]]
+Yes, that string is balanced!
+Enter a string (or Q to quit): [[[(())]]]{}{{[[[]]]}}()
+Yes, that string is balanced!
+Enter a string (or Q to quit): [[]][][[[]]
+No, that string is not balanced.
+Enter a string (or Q to quit): {{}{]}[
+No, that string is not balanced.
+Enter a string (or Q to quit): {{[[}}]]
+No, that string is not balanced.
+Enter a string (or Q to quit): {]
+No, that string is not balanced.
+Enter a string (or Q to quit): (()))
+No, that string is not balanced.
+Enter a string (or Q to quit): q
+
+Choose a problem:
+1) Karel Goes Home
+2) Convert String to Integer
+3) Balancing Parentheses
+4) Human Pyramid
+5) Sierpinski Triangle
+6) Flood Fill
+7) Grammar Solver
+Enter your choice (or 0 to quit): 0
+
+Exiting.
