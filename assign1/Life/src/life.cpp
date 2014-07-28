@@ -14,10 +14,15 @@ using namespace std;
 
 void printWelcomeMessage();
 void promptForFile(ifstream &stream);
-void createGrid(ifstream &stream, Grid<char> &grid);
-void nextGeneration(Grid<char> &grid);
+void createGrid(ifstream &stream);
+void nextGeneration();
 int min(int check, int min);
 int max(int check, int max);
+bool menu();
+
+// NOTE: ASSIGNMENT SAYS "DO NOT DECLARE ANY GLOBAL VARIABLES"
+Grid<char> grid(0, 0);
+Grid<char> tempGrid(0,0);
 
 int main() {
     printWelcomeMessage();
@@ -25,12 +30,11 @@ int main() {
     ifstream stream;
     promptForFile(stream);
 
-    Grid<char> grid(0, 0);
-    createGrid(stream, grid);
+    createGrid(stream);
 
-    nextGeneration(grid);
+    while (menu());
 
-    cout << "Have a nice Life!" << endl;
+    cout << "Have a nice Life!";
     return 0;
 }
 
@@ -41,11 +45,11 @@ void printWelcomeMessage() {
          << "- A cell with 1 or fewer neighbors dies." << '\n'
          << "- Locations with 2 neighbors remain stable." << '\n'
          << "- Locations with 3 neighbors will create life." << '\n'
-         << "- A cell with 4 or more neighbors dies." << endl;
+         << "- A cell with 4 or more neighbors dies." << endl << endl;
 }
 
 /*
- * Prompt user for file until proper file is given.
+ * Prompts user for file until proper file is given.
  */
 void promptForFile(ifstream &stream) {
     string filename = "";
@@ -56,7 +60,7 @@ void promptForFile(ifstream &stream) {
     }
 }
 
-void createGrid(ifstream &stream, Grid<char> &grid) {
+void createGrid(ifstream &stream) {
     string line;
 
     getline(stream, line);
@@ -66,19 +70,19 @@ void createGrid(ifstream &stream, Grid<char> &grid) {
     int columns = stringToInteger(line);
 
     grid.resize(rows, columns);
+    tempGrid.resize(rows, columns);
 
     for (int i = 0; i < rows; i++) {
         getline(stream, line);
         for (int j = 0; j < columns; j++) {
             grid[i][j] = line[j];
+            cout << grid[i][j];
         }
+        cout << endl;
     }
 }
 
-void nextGeneration(Grid<char> &grid) {
-    // create temporary grid copy
-    Grid<char> tempGrid(grid.numRows(), grid.numCols());
-
+void nextGeneration() {
     // for each cell:
     for (int row = 0; row < grid.numRows(); row++) {
         for (int col = 0; col < grid.numCols(); col++) {
@@ -131,5 +135,38 @@ int min(int check, int min) {
         return min;
     } else {
         return check;
+    }
+}
+
+bool menu() {
+    char input;
+
+    // reprompt for valid input
+    while(true) {
+        cout << "a)nimate, t)ick, q)uit? ";
+        cin >> input;
+        if (input == 'a' || input == 't' || input == 'q') break;
+        cout << "Invalid choice; please try again." << endl;
+    }
+
+    // do appropriate action and return whether main should continue execution
+    switch(input) {
+        case 'a': // animate
+        {
+            int numFrames = getInteger("How many frames? ");
+            for (int i = 0; i < numFrames; i++) {
+                clearConsole();
+                nextGeneration();
+                pause(50);
+            }
+            return true;
+        }
+        case 't': // tick
+            nextGeneration();
+            return true;
+        case 'q': // quit
+            return false;
+        default:
+            return true;
     }
 }
