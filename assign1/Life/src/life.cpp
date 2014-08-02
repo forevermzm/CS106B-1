@@ -22,11 +22,11 @@ using namespace std;
 // function prototypes
 void printWelcomeMessage();
 void promptForFile(ifstream &stream);
-void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid);
-void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid);
+void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
+void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
 int min(int check, int min);
 int max(int check, int max);
-bool menu(Grid<char> &grid, Grid<char> &tempGrid);
+bool menu(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
 
 int main() {
     printWelcomeMessage();
@@ -36,9 +36,10 @@ int main() {
 
     Grid<char> grid(0, 0);
     Grid<char> tempGrid(0,0);
-    createGrid(stream, grid, tempGrid);
+    LifeGUI gui;
+    createGrid(stream, grid, tempGrid, gui);
 
-    while (menu(grid, tempGrid)); // continue playing game until user asks to quit
+    while (menu(grid, tempGrid, gui)); // continue playing game until user asks to quit
 
     cout << "Have a nice Life!";
     return 0;
@@ -74,7 +75,7 @@ void promptForFile(ifstream &stream) {
  * two grids (one temporary). Prints out the initial state
  * of the grid.
  */
-void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid) {
+void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
     string line;
 
     getline(stream, line);
@@ -86,13 +87,14 @@ void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid) {
     grid.resize(rows, columns);
     tempGrid.resize(rows, columns);
 
+    gui.resize(rows, columns);
+
     for (int i = 0; i < rows; i++) {
         getline(stream, line);
         for (int j = 0; j < columns; j++) {
             grid[i][j] = line[j];
-            cout << grid[i][j];
+            gui.drawCell(i, j, (grid[i][j] == 'X'));
         }
-        cout << endl;
     }
 }
 
@@ -103,7 +105,7 @@ void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid) {
  * accordingly, and then copies the temporary grid over
  * to the original.
  */
-void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid) {
+void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
     // for each cell:
     for (int row = 0; row < grid.numRows(); row++) {
         for (int col = 0; col < grid.numCols(); col++) {
@@ -135,9 +137,8 @@ void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid) {
                     break;
             }
 
-            cout << tempGrid[row][col];
+            gui.drawCell(row, col, (tempGrid[row][col] == 'X'));
         }
-        cout << endl;
     }
     // copy temporary back over to original grid
     grid = tempGrid;
@@ -171,7 +172,7 @@ int min(int check, int min) {
  * Prompts user for the next action and returns boolean
  * for whether or not the game should continue.
  */
-bool menu(Grid<char> &grid, Grid<char> &tempGrid) {
+bool menu(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
     string input;
 
     // reprompt for valid input
@@ -186,12 +187,12 @@ bool menu(Grid<char> &grid, Grid<char> &tempGrid) {
         int numFrames = getInteger("How many frames? ");
         for (int i = 0; i < numFrames; i++) {
             clearConsole();
-            nextGeneration(grid, tempGrid);
+            nextGeneration(grid, tempGrid, gui);
             pause(50);
         }
         return true;
     } else if (input == "t") { // tick
-        nextGeneration(grid, tempGrid);
+        nextGeneration(grid, tempGrid, gui);
         return true;
     } else if (input == "q") { // quit
         return false;
