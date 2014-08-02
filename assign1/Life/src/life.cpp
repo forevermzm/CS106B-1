@@ -15,14 +15,17 @@
 #include "grid.h"
 #include "gwindow.h"
 #include "simpio.h"
+#include "random.h"
 #include "lifegui.h"
 
 using namespace std;
 
 // function prototypes
 void printWelcomeMessage();
-void promptForFile(ifstream &stream);
+void promptForFile(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
 void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
+void createRandomGrid(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
+char getRandomCell();
 void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
 int min(int check, int min);
 int max(int check, int max);
@@ -32,12 +35,10 @@ int main() {
     printWelcomeMessage();
 
     ifstream stream;
-    promptForFile(stream);
-
     Grid<char> grid(0, 0);
     Grid<char> tempGrid(0,0);
     LifeGUI gui;
-    createGrid(stream, grid, tempGrid, gui);
+    promptForFile(stream, grid, tempGrid, gui);
 
     while (menu(grid, tempGrid, gui)); // continue playing game until user asks to quit
 
@@ -61,12 +62,19 @@ void printWelcomeMessage() {
 /*
  * Prompts user for file until proper file is given.
  */
-void promptForFile(ifstream &stream) {
+void promptForFile(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
     string filename = "";
 
     while(true) {
-        filename = promptUserForFile(stream, "Grid input file name? ");
-        if (fileExists(filename)) break;
+        filename = getLine("Grid input file name (or \"random\")? ");
+        if (filename == "random") {
+            createRandomGrid(grid, tempGrid, gui);
+            break;
+        } else if (fileExists(filename)) {
+            openFile(stream, filename);
+            createGrid(stream, grid, tempGrid, gui);
+            break;
+        }
     }
 }
 
@@ -78,23 +86,57 @@ void promptForFile(ifstream &stream) {
 void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
     string line;
 
+    // get size of grid
     getline(stream, line);
     int rows = stringToInteger(line);
 
     getline(stream, line);
     int columns = stringToInteger(line);
 
+    // resize grid and gui
     grid.resize(rows, columns);
     tempGrid.resize(rows, columns);
-
     gui.resize(rows, columns);
 
+    // fill in cells of grid
     for (int i = 0; i < rows; i++) {
         getline(stream, line);
         for (int j = 0; j < columns; j++) {
             grid[i][j] = line[j];
             gui.drawCell(i, j, (grid[i][j] == 'X'));
         }
+    }
+}
+
+/*
+ * If user inputs "random" as filename, creates a grid
+ * of random size and with random cells. Prints out initial
+ * state of grid.
+ */
+void createRandomGrid(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
+    // get size of grid
+    int rows = randomInteger(1, 50);
+    int columns = randomInteger(1, 50);
+
+    // resize grid and gui
+    grid.resize(rows, columns);
+    tempGrid.resize(rows, columns);
+    gui.resize(rows, columns);
+
+    // fill in cells of grid
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            grid[i][j] = getRandomCell();
+            gui.drawCell(i, j, (grid[i][j] == 'X'));
+        }
+    }
+}
+
+char getRandomCell() {
+    if (randomChance(.5)) {
+        return 'X';
+    } else {
+        return '-';
     }
 }
 
