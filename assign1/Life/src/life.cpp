@@ -22,15 +22,11 @@ using namespace std;
 // function prototypes
 void printWelcomeMessage();
 void promptForFile(ifstream &stream);
-void createGrid(ifstream &stream);
-void nextGeneration();
+void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid);
+void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid);
 int min(int check, int min);
 int max(int check, int max);
-bool menu();
-
-// NOTE: ASSIGNMENT SAYS "DO NOT DECLARE ANY GLOBAL VARIABLES"
-Grid<char> grid(0, 0);
-Grid<char> tempGrid(0,0);
+bool menu(Grid<char> &grid, Grid<char> &tempGrid);
 
 int main() {
     printWelcomeMessage();
@@ -38,9 +34,11 @@ int main() {
     ifstream stream;
     promptForFile(stream);
 
-    createGrid(stream);
+    Grid<char> grid(0, 0);
+    Grid<char> tempGrid(0,0);
+    createGrid(stream, grid, tempGrid);
 
-    while (menu()); // continue playing game until user asks to quit
+    while (menu(grid, tempGrid)); // continue playing game until user asks to quit
 
     cout << "Have a nice Life!";
     return 0;
@@ -76,7 +74,7 @@ void promptForFile(ifstream &stream) {
  * two grids (one temporary). Prints out the initial state
  * of the grid.
  */
-void createGrid(ifstream &stream) {
+void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid) {
     string line;
 
     getline(stream, line);
@@ -105,7 +103,7 @@ void createGrid(ifstream &stream) {
  * accordingly, and then copies the temporary grid over
  * to the original.
  */
-void nextGeneration() {
+void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid) {
     // for each cell:
     for (int row = 0; row < grid.numRows(); row++) {
         for (int col = 0; col < grid.numCols(); col++) {
@@ -173,7 +171,7 @@ int min(int check, int min) {
  * Prompts user for the next action and returns boolean
  * for whether or not the game should continue.
  */
-bool menu() {
+bool menu(Grid<char> &grid, Grid<char> &tempGrid) {
     string input;
 
     // reprompt for valid input
@@ -188,12 +186,12 @@ bool menu() {
         int numFrames = getInteger("How many frames? ");
         for (int i = 0; i < numFrames; i++) {
             clearConsole();
-            nextGeneration();
+            nextGeneration(grid, tempGrid);
             pause(50);
         }
         return true;
     } else if (input == "t") { // tick
-        nextGeneration();
+        nextGeneration(grid, tempGrid);
         return true;
     } else if (input == "q") { // quit
         return false;
