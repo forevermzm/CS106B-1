@@ -1,3 +1,9 @@
+/*
+ * CS106B Homework 1, Game of Life
+ * Claire Huang
+ */
+
+// libraries
 #include <cctype>
 #include <cmath>
 #include <fstream>
@@ -10,8 +16,10 @@
 #include "gwindow.h"
 #include "simpio.h"
 #include "lifegui.h"
+
 using namespace std;
 
+// function prototypes
 void printWelcomeMessage();
 void promptForFile(ifstream &stream);
 void createGrid(ifstream &stream);
@@ -32,12 +40,15 @@ int main() {
 
     createGrid(stream);
 
-    while (menu());
+    while (menu()); // continue playing game until user asks to quit
 
     cout << "Have a nice Life!";
     return 0;
 }
 
+/*
+ * Prints welcome message and rules of the game.
+ */
 void printWelcomeMessage() {
     cout << "Welcome to the CS 106B Game of Life," << '\n'
          << "a simulation of the lifecycle of a bacteria colony." << '\n'
@@ -60,6 +71,11 @@ void promptForFile(ifstream &stream) {
     }
 }
 
+/*
+ * Reads input file from user, and creates and fills in
+ * two grids (one temporary). Prints out the initial state
+ * of the grid.
+ */
 void createGrid(ifstream &stream) {
     string line;
 
@@ -82,6 +98,13 @@ void createGrid(ifstream &stream) {
     }
 }
 
+/*
+ * Advances the grid one generation and prints out new state
+ * of the cells. For each cell in the grid, it counts how
+ * many neighbors there are, updates the temporary grid
+ * accordingly, and then copies the temporary grid over
+ * to the original.
+ */
 void nextGeneration() {
     // for each cell:
     for (int row = 0; row < grid.numRows(); row++) {
@@ -122,6 +145,10 @@ void nextGeneration() {
     grid = tempGrid;
 }
 
+/*
+ * Returns the larger of two integer parameters.
+ * Used for keeping the grid indexes in bounds.
+ */
 int max(int check, int max) {
     if (check < max) {
         return max;
@@ -130,6 +157,10 @@ int max(int check, int max) {
     }
 }
 
+/*
+ * Returns the smaller of two integer parameters.
+ * Used for keeping the grid indexes in bounds.
+ */
 int min(int check, int min) {
     if (check > min) {
         return min;
@@ -138,35 +169,35 @@ int min(int check, int min) {
     }
 }
 
+/*
+ * Prompts user for the next action and returns boolean
+ * for whether or not the game should continue.
+ */
 bool menu() {
-    char input;
+    string input;
 
     // reprompt for valid input
     while(true) {
-        cout << "a)nimate, t)ick, q)uit? ";
-        cin >> input;
-        if (input == 'a' || input == 't' || input == 'q') break;
+        input = getLine("a)nimate, t)ick, q)uit? ");
+        if (input == "a" || input == "t" || input == "q") break;
         cout << "Invalid choice; please try again." << endl;
     }
 
     // do appropriate action and return whether main should continue execution
-    switch(input) {
-        case 'a': // animate
-        {
-            int numFrames = getInteger("How many frames? ");
-            for (int i = 0; i < numFrames; i++) {
-                clearConsole();
-                nextGeneration();
-                pause(50);
-            }
-            return true;
-        }
-        case 't': // tick
+    if (input == "a") { // animate
+        int numFrames = getInteger("How many frames? ");
+        for (int i = 0; i < numFrames; i++) {
+            clearConsole();
             nextGeneration();
-            return true;
-        case 'q': // quit
-            return false;
-        default:
-            return true;
+            pause(50);
+        }
+        return true;
+    } else if (input == "t") { // tick
+        nextGeneration();
+        return true;
+    } else if (input == "q") { // quit
+        return false;
+    } else {
+        return true;
     }
 }
