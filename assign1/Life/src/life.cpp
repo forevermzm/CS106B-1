@@ -20,27 +20,32 @@
 
 using namespace std;
 
+typedef struct {
+    ifstream stream;
+    Grid<char> grid;
+    Grid<char> tempGrid;
+    LifeGUI gui;
+} GameContext;
+
 // function prototypes
 void printWelcomeMessage();
-void promptForFile(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
-void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
-void createRandomGrid(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
+void promptForFile(GameContext &context);
+void createGrid(GameContext &context);
+void createRandomGrid(GameContext &context);
 char getRandomCell();
-void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
+void nextGeneration(GameContext &context);
 int min(int check, int min);
 int max(int check, int max);
-bool menu(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui);
+bool menu(GameContext &context);
 
 int main() {
     printWelcomeMessage();
 
-    ifstream stream;
-    Grid<char> grid(0, 0);
-    Grid<char> tempGrid(0,0);
-    LifeGUI gui;
-    promptForFile(stream, grid, tempGrid, gui);
+    GameContext context;
 
-    while (menu(grid, tempGrid, gui)); // continue playing game until user asks to quit
+    promptForFile(context);
+
+    while (menu(context)); // continue playing game until user asks to quit
 
     cout << "Have a nice Life!";
     return 0;
@@ -62,17 +67,17 @@ void printWelcomeMessage() {
 /*
  * Prompts user for file until proper file is given.
  */
-void promptForFile(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
+void promptForFile(GameContext &context) {
     string filename = "";
 
     while(true) {
         filename = getLine("Grid input file name (or \"random\")? ");
         if (filename == "random") {
-            createRandomGrid(grid, tempGrid, gui);
+            createRandomGrid(context);
             break;
         } else if (fileExists(filename)) {
-            openFile(stream, filename);
-            createGrid(stream, grid, tempGrid, gui);
+            openFile(context.stream, filename);
+            createGrid(context);
             break;
         }
     }
@@ -83,27 +88,27 @@ void promptForFile(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, Lif
  * two grids (one temporary). Prints out the initial state
  * of the grid.
  */
-void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
+void createGrid(GameContext &context) {
     string line;
 
     // get size of grid
-    getline(stream, line);
+    getline(context.stream, line);
     int rows = stringToInteger(line);
 
-    getline(stream, line);
+    getline(context.stream, line);
     int columns = stringToInteger(line);
 
     // resize grid and gui
-    grid.resize(rows, columns);
-    tempGrid.resize(rows, columns);
-    gui.resize(rows, columns);
+    context.grid.resize(rows, columns);
+    context.tempGrid.resize(rows, columns);
+    context.gui.resize(rows, columns);
 
     // fill in cells of grid
     for (int i = 0; i < rows; i++) {
-        getline(stream, line);
+        getline(context.stream, line);
         for (int j = 0; j < columns; j++) {
-            grid[i][j] = line[j];
-            gui.drawCell(i, j, (grid[i][j] == 'X'));
+            context.grid[i][j] = line[j];
+            context.gui.drawCell(i, j, (context.grid[i][j] == 'X'));
         }
     }
 }
@@ -113,21 +118,21 @@ void createGrid(ifstream &stream, Grid<char> &grid, Grid<char> &tempGrid, LifeGU
  * of random size and with random cells. Prints out initial
  * state of grid.
  */
-void createRandomGrid(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
+void createRandomGrid(GameContext &context) {
     // get size of grid
     int rows = randomInteger(1, 50);
     int columns = randomInteger(1, 50);
 
     // resize grid and gui
-    grid.resize(rows, columns);
-    tempGrid.resize(rows, columns);
-    gui.resize(rows, columns);
+    context.grid.resize(rows, columns);
+    context.tempGrid.resize(rows, columns);
+    context.gui.resize(rows, columns);
 
     // fill in cells of grid
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            grid[i][j] = getRandomCell();
-            gui.drawCell(i, j, (grid[i][j] == 'X'));
+            context.grid[i][j] = getRandomCell();
+            context.gui.drawCell(i, j, (context.grid[i][j] == 'X'));
         }
     }
 }
@@ -147,17 +152,17 @@ char getRandomCell() {
  * accordingly, and then copies the temporary grid over
  * to the original.
  */
-void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
+void nextGeneration(GameContext &context) {
     // for each cell:
-    for (int row = 0; row < grid.numRows(); row++) {
-        for (int col = 0; col < grid.numCols(); col++) {
+    for (int row = 0; row < context.grid.numRows(); row++) {
+        for (int col = 0; col < context.grid.numCols(); col++) {
             // count number of living neighbors
             int neighborsCount = 0;
 
-            for (int i = max(row - 1, 0); i <= min(row + 1, grid.numRows() - 1); i++) {
-                for (int j = max(col - 1, 0); j <= min(col + 1, grid.numCols() - 1); j++) {
+            for (int i = max(row - 1, 0); i <= min(row + 1, context.grid.numRows() - 1); i++) {
+                for (int j = max(col - 1, 0); j <= min(col + 1, context.grid.numCols() - 1); j++) {
                     if (i == row && j == col) continue; // don't check the cell itself
-                    if (grid[i][j] == 'X') {
+                    if (context.grid[i][j] == 'X') {
                         neighborsCount++;
                     }
                 }
@@ -166,24 +171,24 @@ void nextGeneration(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
             // change in temporary
             switch (neighborsCount) {
                 case 0: case 1:
-                    tempGrid[row][col] = '-';
+                    context.tempGrid[row][col] = '-';
                     break;
                 case 2:
-                    tempGrid[row][col] = grid[row][col];
+                    context.tempGrid[row][col] = context.grid[row][col];
                     break;
                 case 3:
-                    tempGrid[row][col] = 'X';
+                    context.tempGrid[row][col] = 'X';
                     break;
                 default:
-                    tempGrid[row][col] = '-';
+                    context.tempGrid[row][col] = '-';
                     break;
             }
 
-            gui.drawCell(row, col, (tempGrid[row][col] == 'X'));
+            context.gui.drawCell(row, col, (context.tempGrid[row][col] == 'X'));
         }
     }
     // copy temporary back over to original grid
-    grid = tempGrid;
+    context.grid = context.tempGrid;
 }
 
 /*
@@ -214,7 +219,7 @@ int min(int check, int min) {
  * Prompts user for the next action and returns boolean
  * for whether or not the game should continue.
  */
-bool menu(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
+bool menu(GameContext &context) {
     string input;
 
     // reprompt for valid input
@@ -229,12 +234,12 @@ bool menu(Grid<char> &grid, Grid<char> &tempGrid, LifeGUI &gui) {
         int numFrames = getInteger("How many frames? ");
         for (int i = 0; i < numFrames; i++) {
             clearConsole();
-            nextGeneration(grid, tempGrid, gui);
+            nextGeneration(context);
             pause(50);
         }
         return true;
     } else if (input == "t") { // tick
-        nextGeneration(grid, tempGrid, gui);
+        nextGeneration(context);
         return true;
     } else if (input == "q") { // quit
         return false;
