@@ -1,5 +1,5 @@
 /*
- * CS106B Homework 1, Game of Life
+ * CS106B Assignment 1, Game of Life
  * Claire Huang
  * ------------------------------------------------------
  * EXTRA FEATURES: added GUI and random world generation

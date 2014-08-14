@@ -1,3 +1,8 @@
+/*
+ * CS106B Assignment 2 Part 1, Word Ladders
+ * Claire Huang
+ */
+
 #include <cctype>
 #include <cmath>
 #include <fstream>
@@ -64,6 +69,12 @@ void setupDictionary(Set<string> &set) {
     }
 }
 
+/**
+ * @brief promptUser
+ * Prompts user for 2 words and reprompts until valid words
+ * are given. Returns whether program should continue executing.
+ * @return 
+ */
 bool promptUser() {
     startWord = getLine("Word #1: (or Enter to quit): ");
     if (startWord.empty()) return false; // if "Enter to quit"
@@ -88,6 +99,14 @@ bool promptUser() {
     return true;
 }
 
+/**
+ * @brief findWordLadder
+ * Loops through queue of word ladder stacks. Removes topmost word
+ * from ladder, finds its neighbors, and if they aren't the end
+ * word, creates a copy of the ladder for each neighbor and adds the
+ * copies to the queue. Prints either the final word ladder or that 
+ * no ladders could be found.
+ */
 void findWordLadder() {
     // setup
     Queue<Stack<string> > ladders;
@@ -109,25 +128,31 @@ void findWordLadder() {
         findNeighbors(neighbors, usedWords, currentWord);
 
         for (int i = 0; i < neighbors.size(); i++) { // for each neighbor
-            if (neighbors[i] == endWord) {
+            if (neighbors[i] == endWord) { // final word ladder is found!
                 currentLadder.push(endWord);
                 cout << "A ladder from " << endWord << " back to " << startWord << ":" << endl;
                 printStack(currentLadder);
                 return;
-            } else {
+            } else { // make copy of ladder with neighbor and add to queue
                 tempLadder = currentLadder;
                 tempLadder.push(neighbors[i]);
                 ladders.enqueue(tempLadder);
             }
-//            cout << "looping through neighbors" << endl;
         }
-//        cout << "done with ladder" << endl;
     }
     
     cout << "No word ladder found from " << endWord << " back to " << startWord << "." << endl << endl;
     return;
 }
 
+/**
+ * @brief findNeighbors
+ * Finds all valid English and unused neighbors of a word
+ * and puts them in the passed in Vector.
+ * @param neighbors
+ * @param usedWords
+ * @param word
+ */
 void findNeighbors(Vector<string> &neighbors, Set<string> &usedWords, string word) {
     for (int i = 0; i < word.length(); i++) { // for each letter in the word
         for (char letter = 'a'; letter <= 'z'; letter++) { // for each letter in alphabet
@@ -143,6 +168,11 @@ void findNeighbors(Vector<string> &neighbors, Set<string> &usedWords, string wor
     }
 }
 
+/**
+ * @brief printStack
+ * Prints final word ladder stack.
+ * @param stack
+ */
 void printStack(Stack<string> &stack) {
     while(!stack.isEmpty()) {
         cout << stack.pop() << " ";
