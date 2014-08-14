@@ -1,6 +1,8 @@
 /*
  * CS106B Homework 1, Game of Life
  * Claire Huang
+ * ------------------------------------------------------
+ * EXTRA FEATURES: added GUI and random world generation
  */
 
 // libraries
@@ -34,6 +36,7 @@ void createGrid(GameContext &context);
 void createRandomGrid(GameContext &context);
 char getRandomCell();
 void nextGeneration(GameContext &context);
+int countNeighbors(GameContext &context, int row, int col);
 int min(int check, int min);
 int max(int check, int max);
 bool menu(GameContext &context);
@@ -68,10 +71,8 @@ void printWelcomeMessage() {
  * Prompts user for file until proper file is given.
  */
 void promptForFile(GameContext &context) {
-    string filename = "";
-
     while(true) {
-        filename = getLine("Grid input file name (or \"random\")? ");
+        string filename = getLine("Grid input file name (or \"random\")? ");
         if (filename == "random") {
             createRandomGrid(context);
             break;
@@ -157,16 +158,7 @@ void nextGeneration(GameContext &context) {
     for (int row = 0; row < context.grid.numRows(); row++) {
         for (int col = 0; col < context.grid.numCols(); col++) {
             // count number of living neighbors
-            int neighborsCount = 0;
-
-            for (int i = max(row - 1, 0); i <= min(row + 1, context.grid.numRows() - 1); i++) {
-                for (int j = max(col - 1, 0); j <= min(col + 1, context.grid.numCols() - 1); j++) {
-                    if (i == row && j == col) continue; // don't check the cell itself
-                    if (context.grid[i][j] == 'X') {
-                        neighborsCount++;
-                    }
-                }
-            }
+            int neighborsCount = countNeighbors(context, row, col);
 
             // change in temporary
             switch (neighborsCount) {
@@ -189,6 +181,21 @@ void nextGeneration(GameContext &context) {
     }
     // copy temporary back over to original grid
     context.grid = context.tempGrid;
+}
+
+int countNeighbors(GameContext &context, int row, int col) {
+    int neighborsCount = 0;
+
+    for (int i = max(row - 1, 0); i <= min(row + 1, context.grid.numRows() - 1); i++) {
+        for (int j = max(col - 1, 0); j <= min(col + 1, context.grid.numCols() - 1); j++) {
+            if (i == row && j == col) continue; // don't check the cell itself
+            if (context.grid[i][j] == 'X') {
+                neighborsCount++;
+            }
+        }
+    }
+
+    return neighborsCount;
 }
 
 /*
