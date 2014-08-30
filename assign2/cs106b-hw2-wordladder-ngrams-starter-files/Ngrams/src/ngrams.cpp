@@ -19,10 +19,10 @@ void setup();
 void setupMap(ifstream &stream);
 string queueToString(Queue<string> queue);
 void tokenScanner(Queue<string> &tokens, string line);
-bool readLineFromFile(ifstream &stream, Queue<string> &tokens, string line);
+string nextToken(ifstream &stream, Queue<string> &tokens, string line);
 
 int n;
-Map<string, Vector<string> > map;
+Map<string, Vector<string> > wordsMap;
 
 int main() {
     printWelcomeMessage();
@@ -66,44 +66,41 @@ void setup() {
 
 void setupMap(ifstream &stream) {
     Queue<string> window;
-    string line;
+    string line, windowString;
     string currentToken;
     Queue<string> tokens;
     
-    // get enough words to open first window
-    while(tokens.size() < n) {
-        if (!readLineFromFile(stream, tokens, line)) return; // reached end of file
-    }
-    
     // add up enough words for the first window
+    // can assume n < total # words in file (won't reach end of file here)
     for (int i = 0; i < (n-1); i++) {
-        window.enqueue(tokens.dequeue());
+        window.enqueue(nextToken(stream, tokens, line));
     }
     
-    cout << queueToString(window) << endl;
+    // first window
+    windowString = queueToString(window);
+    if (wordsMap[windowString] == NULL) wordsMap[windowString] = Vector<String>();
+    wordsMap.put(windowString, wordsMap[windowString].add(window.peek()));
+    
+    cout << windowString << endl;
     
     while(tokens.size() > 0) { // while there are tokens left
-        window.enqueue(tokens.dequeue());
-        if(window.size() > (n-1)) window.dequeue();
-        cout << queueToString(window) << endl;
+        window.enqueue(nextToken(stream, tokens, line));
+        if(stream.fail()) break; // end of file
+        if(window.size() > (n-1)) window.dequeue(); // if window is larger than proper size   
+        windowString = queueToString(window);
+        if (wordsMap[windowString] == NULL) wordsMap[windowString] = Vector<String>();
+        wordsMap.put(windowString, wordsMap[windowString].add(window.peek()));
     }
 }
 
-/**
- * @brief readLineFromFile
- * Reads a line from input file and fills queue of tokens. Returns whether it's 
- * ok to keep reading lines.
- * @param stream
- * @param tokens
- * @param line
- * @return 
- */
-bool readLineFromFile(ifstream &stream, Queue<string> &tokens, string line) {
-    line = ""; // empty the line
-    getline(stream, line);
-    if (stream.fail()) return false;
-    tokenScanner(tokens, line); // split into individual words
-    return true;
+string nextToken(ifstream &stream, Queue<string> &tokens, string line) {
+    while(tokens.size() <= 0) { // if no more tokens left, read a new line
+        line = ""; // empty the line
+        getline(stream, line);
+        if (stream.fail()) return; // stop if at end of file
+        tokenScanner(tokens, line); // split into individual words
+    }
+    return tokens.dequeue();
 }
 
 /**

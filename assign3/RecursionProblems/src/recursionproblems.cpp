@@ -1,10 +1,3 @@
-// This is the .cpp file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
-
-// Please feel free to add any other #includes you need!
 #include <cmath>
 #include <iostream>
 #include <iomanip>
@@ -20,9 +13,10 @@
 #include "recursionproblems.h"
 using namespace std;
 
-int countKarelPaths(int street, int avenue) {
-    // TODO: write this function
-    return 0;
+int countKarelPaths(int street, int avenue) {    
+    if (street == 1 && avenue == 1) return 1; // reached the end square, valid path
+    if (street < 1 || avenue < 1) return 0; // hit outer bounds of world, invalid path
+    return countKarelPaths(street - 1, avenue) + countKarelPaths(street, avenue - 1);
 }
 
 int convertStringToInteger(string exp) {
