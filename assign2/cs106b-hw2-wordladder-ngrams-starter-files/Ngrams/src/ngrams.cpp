@@ -17,9 +17,9 @@ using namespace std;
 void printWelcomeMessage();
 void setup();
 void setupMap(ifstream &stream);
-string queueToString(Queue<string> queue);
 void tokenScanner(Queue<string> &tokens, string line);
 string nextToken(ifstream &stream, Queue<string> &tokens, string line);
+string queueToString(Queue<string> queue);
 
 int n;
 Map<string, Vector<string> > wordsMap;
@@ -28,6 +28,8 @@ int main() {
     printWelcomeMessage();
     
     setup();
+    
+    cout << wordsMap.toString() << endl;
     
     cout << "Exiting." << endl;
     return 0;
@@ -66,8 +68,8 @@ void setup() {
 
 void setupMap(ifstream &stream) {
     Queue<string> window;
-    string line, windowString;
-    string currentToken;
+    string line, windowString, nextWord;
+    Vector<string> tempVector;
     Queue<string> tokens;
     
     // add up enough words for the first window
@@ -76,20 +78,23 @@ void setupMap(ifstream &stream) {
         window.enqueue(nextToken(stream, tokens, line));
     }
     
-    // first window
-    windowString = queueToString(window);
-    if (wordsMap[windowString] == NULL) wordsMap[windowString] = Vector<String>();
-    wordsMap.put(windowString, wordsMap[windowString].add(window.peek()));
-    
-    cout << windowString << endl;
-    
     while(tokens.size() > 0) { // while there are tokens left
-        window.enqueue(nextToken(stream, tokens, line));
+        // get next word
+        nextWord = nextToken(stream, tokens, line);
         if(stream.fail()) break; // end of file
-        if(window.size() > (n-1)) window.dequeue(); // if window is larger than proper size   
+        
+        // add window and next token to map
         windowString = queueToString(window);
-        if (wordsMap[windowString] == NULL) wordsMap[windowString] = Vector<String>();
-        wordsMap.put(windowString, wordsMap[windowString].add(window.peek()));
+//        windowString = window.toString();
+        tempVector = wordsMap[windowString];
+        tempVector.add(nextWord);
+        wordsMap.put(windowString, tempVector);
+        
+        cout << windowString << endl;
+        
+        // make next window
+        window.enqueue(nextWord);
+        if(window.size() > (n-1)) window.dequeue(); // if window is larger than proper size 
     }
 }
 
@@ -97,7 +102,7 @@ string nextToken(ifstream &stream, Queue<string> &tokens, string line) {
     while(tokens.size() <= 0) { // if no more tokens left, read a new line
         line = ""; // empty the line
         getline(stream, line);
-        if (stream.fail()) return; // stop if at end of file
+        if (stream.fail()) return ""; // stop if at end of file
         tokenScanner(tokens, line); // split into individual words
     }
     return tokens.dequeue();
@@ -129,12 +134,12 @@ void tokenScanner(Queue<string> &tokens, string line) {
 }
 
 string queueToString(Queue<string> queue) {
-    string key;
+    string str;
     
-    while(!queue.isEmpty()) {
-        key += queue.dequeue() + " ";
+    while(true) {
+        str += queue.dequeue() + " ";
+        if (queue.isEmpty()) break;
     }
-
-    return key;    
+    
+    return str;
 }
-

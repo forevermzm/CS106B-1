@@ -17,11 +17,12 @@ int countKarelPaths(int street, int avenue) {
     if (street == 1 && avenue == 1) return 1; // reached the end square, valid path
     if (street < 1 || avenue < 1) return 0; // hit outer bounds of world, invalid path
     return countKarelPaths(street - 1, avenue) + countKarelPaths(street, avenue - 1);
+    
+    // can't use -- because can't alter original values of street and avenue
 }
 
 int convertStringToInteger(string exp) {
-    // TODO: write this function
-    return 0;
+    if (exp.length() <= 0) return 0;
 }
 
 bool isBalanced(string exp) {
