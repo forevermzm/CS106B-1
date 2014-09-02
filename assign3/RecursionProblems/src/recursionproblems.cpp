@@ -22,7 +22,8 @@ int countKarelPaths(int street, int avenue) {
 }
 
 int convertStringToInteger(string exp) {
-    if (exp.length() <= 0) return 0;
+//    if (exp.length() <= 0) return 0;
+    return 0;
 }
 
 bool isBalanced(string exp) {
@@ -31,8 +32,14 @@ bool isBalanced(string exp) {
 }
 
 double weightOnKnees(int row, int col, Vector<Vector<double> >& weights) {
-    // TODO: write this function
-    return 0.0;
+    // out of bounds
+    if (row < 0 || row >= weights.size() || col < 0 || col >= weights[row].size()) return 0.0;
+    
+    if (row == 0 && col == 0) return weights[row][col];
+    
+    return weights[row][col] 
+            + 0.5 * weightOnKnees(row - 1, col - 1, weights) 
+            + 0.5 * weightOnKnees(row - 1, col, weights);
 }
 
 void drawSierpinskiTriangle(GWindow& gw, int x, int y, int size, int order) {
