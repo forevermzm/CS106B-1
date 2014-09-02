@@ -67,25 +67,29 @@ void setup() {
 }
 
 void setupMap(ifstream &stream) {
-    Queue<string> window;
+    Queue<string> window, wrapAround;
     string line, windowString, nextWord;
     Vector<string> tempVector;
     Queue<string> tokens;
     
     // add up enough words for the first window
     // can assume n < total # words in file (won't reach end of file here)
-    for (int i = 0; i < (n-1); i++) {
-        window.enqueue(nextToken(stream, tokens, line));
+    for (int i = 0; i < n; i++) {
+        wrapAround.enqueue(nextToken(stream, tokens, line));
     }
     
-    while(tokens.size() > 0) { // while there are tokens left
+    // first window
+    window = wrapAround;
+    window.dequeue(); // one too many words remembered
+    
+    while(true) {
         // get next word
         nextWord = nextToken(stream, tokens, line);
-        if(stream.fail()) break; // end of file
+        if(stream.fail()) nextWord = wrapAround.dequeue(); // end of file
+        if(wrapAround.isEmpty()) break; // no more wrap around words
         
         // add window and next token to map
         windowString = queueToString(window);
-//        windowString = window.toString();
         tempVector = wordsMap[windowString];
         tempVector.add(nextWord);
         wordsMap.put(windowString, tempVector);
