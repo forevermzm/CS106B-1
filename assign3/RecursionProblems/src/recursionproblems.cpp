@@ -15,6 +15,7 @@ using namespace std;
 
 void drawTriangle(GWindow& gw, int x, int y, int sideLength);
 string complement(string str);
+void fill(int x, int y, int width, int height, int color, int startColor);
 
 int countKarelPaths(int street, int avenue) {    
     if (street == 1 && avenue == 1) return 1; // reached the end square, valid path
@@ -94,7 +95,20 @@ void drawTriangle(GWindow& gw, int x, int y, int sideLength) {
 }
 
 void floodFill(int x, int y, int width, int height, int color) {
+    int startColor = getPixelColor(x, y);
+    fill(x, y, width, height, color, startColor);
+}
+
+void fill(int x, int y, int width, int height, int color, int startColor) {
+    if (x < 0 || x > width-1 || y < 0 || y > height-1) return; // looking out of bounds
+    if (getPixelColor(x, y) == color) return; // same color as fill color
+    if (getPixelColor(x, y) != startColor) return; // reached outside of color blob
     
+    setPixelColor(x, y, color);
+    fill(x-1, y, width, height, color, startColor);
+    fill(x+1, y, width, height, color, startColor);
+    fill(x, y-1, width, height, color, startColor);
+    fill(x, y+1, width, height, color, startColor);
 }
 
 Vector<string> grammarGenerate(istream& input, string symbol, int times) {
