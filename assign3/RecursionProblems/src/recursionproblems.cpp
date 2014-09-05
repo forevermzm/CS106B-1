@@ -14,29 +14,53 @@
 using namespace std;
 
 void drawTriangle(GWindow& gw, int x, int y, int sideLength);
+string complement(string str);
 
 int countKarelPaths(int street, int avenue) {    
     if (street == 1 && avenue == 1) return 1; // reached the end square, valid path
     if (street < 1 || avenue < 1) return 0; // hit outer bounds of world, invalid path
     return countKarelPaths(street - 1, avenue) + countKarelPaths(street, avenue - 1);
     
-    // can't use -- because can't alter original values of street and avenue
+    // can't use street-- because can't alter original values of street and avenue
 }
 
 int convertStringToInteger(string exp) {
-    if (exp.length() <= 0) return 0;
+    int sum = 0;
     
     if (exp.length() == 1) {
         const char* number = exp.c_str();
         return (number[0] - '0');
     }
     
-    return 0;
+    sum += 10 * convertStringToInteger(exp.substr(1, string::npos));
+    
+    return sum;
 }
 
 bool isBalanced(string exp) {
-    // TODO: write this function
+    if (exp.length() == 0) return true; // empty string is always balanced
+    
+    int foundIndex = exp.substr(1, string::npos).find(complement(exp.substr(0, 1))); // find the pair of the first character
+    if (foundIndex == string::npos) {
+        return false;
+    } else {
+        string newString = exp.substr(1, string::npos).replace(foundIndex, 1, ""); // remove pair
+        return isBalanced(newString);
+    }
+    
     return false;
+}
+
+string complement(string str) {
+    if (str == "(") {
+        return ")";
+    } else if (str == "[") {
+        return "]";
+    } else if (str == "{") {
+        return "}";
+    } else {
+        return "";
+    }
 }
 
 double weightOnKnees(int row, int col, Vector<Vector<double> >& weights) {
@@ -70,8 +94,7 @@ void drawTriangle(GWindow& gw, int x, int y, int sideLength) {
 }
 
 void floodFill(int x, int y, int width, int height, int color) {
-    // TODO: write this function
-
+    
 }
 
 Vector<string> grammarGenerate(istream& input, string symbol, int times) {
