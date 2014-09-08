@@ -16,6 +16,8 @@ using namespace std;
 void drawTriangle(GWindow& gw, int x, int y, int sideLength);
 string complement(string str);
 void fill(int x, int y, int width, int height, int color, int startColor);
+int stringToInt(string exp);
+int charToInt(string number);
 
 int countKarelPaths(int street, int avenue) {    
     if (street == 1 && avenue == 1) return 1; // reached the end square, valid path
@@ -26,16 +28,27 @@ int countKarelPaths(int street, int avenue) {
 }
 
 int convertStringToInteger(string exp) {
-    int sum = 0;
-    
-    if (exp.length() == 1) {
-        const char* number = exp.c_str();
-        return (number[0] - '0');
+    if (exp[0] == '-') {
+        return -1 * stringToInt(exp);
+    } else {
+        return stringToInt(exp);
     }
+}
+
+int stringToInt(string exp) {
+    if (exp.length() == 1 && exp == "-") return 0;
+    if (exp.length() == 1) return charToInt(exp);
     
-    sum += 10 * convertStringToInteger(exp.substr(1, string::npos));
-    
-    return sum;
+    string substrFront = exp.substr(0, exp.size() - 1);
+    string substrEnd = exp.substr(exp.size() - 1, 1);
+    int total = 10 * stringToInt(substrFront) + charToInt(substrEnd);
+        
+    return total;
+}
+
+int charToInt(string number) {
+    const char* ch = number.c_str();
+    return (ch[0] - '0');
 }
 
 bool isBalanced(string exp) {
