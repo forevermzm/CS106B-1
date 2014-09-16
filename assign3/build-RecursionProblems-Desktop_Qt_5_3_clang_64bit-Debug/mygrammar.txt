@@ -1,0 +1,2 @@
+<s>::=the|dog
+<s>::=ate|pizza

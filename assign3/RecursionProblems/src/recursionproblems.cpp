@@ -11,6 +11,7 @@
 #include "strlib.h"
 #include "vector.h"
 #include "recursionproblems.h"
+#include "set.h"
 using namespace std;
 
 void drawTriangle(GWindow& gw, int x, int y, int sideLength);
@@ -18,6 +19,8 @@ string complement(string str);
 void fill(int x, int y, int width, int height, int color, int startColor);
 int stringToInt(string exp);
 int charToInt(string number);
+bool readFile(istream& input, Map<string, Vector<string> >& grammarRules);
+string generateSentence(string symbol, Map<string, Vector<string> >& grammarRules, string& result);
 
 int countKarelPaths(int street, int avenue) {    
     if (street == 1 && avenue == 1) return 1; // reached the end square, valid path
@@ -125,7 +128,63 @@ void fill(int x, int y, int width, int height, int color, int startColor) {
 }
 
 Vector<string> grammarGenerate(istream& input, string symbol, int times) {
-    // TODO: write this function
     Vector<string> v;
+    Map<string, Vector<string> > grammarRules;
+    
+    // checking for valid input
+    if (times <= 0) return v;
+    if (symbol.empty()) return v;
+    if (!readFile(input, grammarRules)) return v;
+    
+    for (int i = 0; i < times; i++) {
+        string result;
+        generateSentence(symbol,grammarRules, result);
+        v.add(result);
+    }
+    
     return v;
+}
+
+bool readFile(istream& input, Map<string, Vector<string> >& grammarRules) {
+    string line, key;
+    Vector<string> value;
+    Set<string> usedNonTerminals;
+    
+    while(true) {
+        // empty variables for reuse
+        line = "";
+        key = "";
+        value.clear();
+        
+        // get line
+        getline(input, line);
+        if (input.fail()) break; // end of file
+        trim(line);
+        
+        // get key and value
+        key = line.substr(0, line.find("::="));
+        if (usedNonTerminals.contains(key)) return false;
+        usedNonTerminals.add(key);
+        value = stringSplit(line.substr(key.length()+3, string::npos), "|");
+        
+        // put into map
+        grammarRules.put(key, value);
+    }
+    
+    return true;
+}
+
+string generateSentence(string symbol, Map<string, Vector<string> >& grammarRules, string& result) {
+    if (!grammarRules.containsKey(symbol)) return symbol + " "; // terminal
+    
+    Vector<string> rules = grammarRules.get(symbol);
+    string randomRule = rules.get(randomInteger(0, rules.size() - 1));
+    trim(randomRule);
+    Vector<string> tokens = stringSplit(randomRule, " ");
+    
+    for (string token : tokens) {
+        result += generateSentence(token, grammarRules, result);
+    }
+    
+    return "";
 }
