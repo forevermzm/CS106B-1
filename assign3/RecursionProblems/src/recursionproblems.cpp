@@ -132,9 +132,17 @@ Vector<string> grammarGenerate(istream& input, string symbol, int times) {
     Map<string, Vector<string> > grammarRules;
     
     // checking for valid input
-    if (times <= 0) return v;
-    if (symbol.empty()) return v;
-    if (!readFile(input, grammarRules)) return v;
+    if (times <= 0) {
+        return v;
+    }
+    if (symbol.empty()) {
+        cout << "Symbol cannot be empty." << endl;
+        return v;
+    }
+    if (!readFile(input, grammarRules)) {
+        cout << "Grammar file contains more than 1 rule for the same symbol.";
+        return v;
+    }
     
     for (int i = 0; i < times; i++) {
         string result;

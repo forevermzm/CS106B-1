@@ -1,2 +1,4 @@
-<s>::=the|dog
-<s>::=ate|pizza
+<sentence>::=<object> <subject> <verb>
+<object>::=him|your father|the force
+<subject>::=I|Yoda|you
+<verb>::=must defeat|may have|must be
