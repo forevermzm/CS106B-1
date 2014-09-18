@@ -1,4 +1,4 @@
 <sentence>::=<object> <subject> <verb>
 <object>::=him|your father|the force
 <subject>::=I|Yoda|you
-<verb>::=defeat|may have|must be
+<verb>::=must defeat|may have|must be
