@@ -42,7 +42,7 @@ int main() {
     cout << endl;
     Lexicon dictionary(DICTIONARY_FILE);
     getLine("Press Enter to begin the game ... ");
-
+    
     // play games repeatedly until user decides to quit
     while (true) {
         playOneGame(dictionary);   // your function

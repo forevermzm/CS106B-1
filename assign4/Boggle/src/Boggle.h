@@ -10,6 +10,11 @@
 #include <iostream>
 #include <string>
 #include "lexicon.h"
+#include "vector.h"
+#include "strlib.h"
+#include "shuffle.h"
+#include "random.h"
+
 using namespace std;
 
 class Boggle {
@@ -21,11 +26,18 @@ public:
     int humanScore();
     Set<string> computerWordSearch();
     int getScoreComputer();
-
-    // TODO: add any other member functions/variables necessary
+    
+    string getCurrentBoard();
+    int getNumHumanWords();
+    string getHumanWords();
+    
+    static const int BOARD_SIZE = 16;
 
 private:
-    // TODO: add any other member functions/variables necessary
+    string board;
+    Lexicon boggleDictionary;
+    Set<string> humanWords;
+    int humansScore;
 };
 
 ostream& operator<<(ostream& out, Boggle& boggle);
