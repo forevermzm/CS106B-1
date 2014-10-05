@@ -100,7 +100,7 @@ bool Boggle::humanWordSearch(string word) {
     if (!checkWord(word)) return false;
     // TODO: implement
     
-    
+    humansScore += word.length() - 3;
     humanWords.add(word);
     return true;   // remove this
 }

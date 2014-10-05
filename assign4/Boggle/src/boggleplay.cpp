@@ -60,7 +60,6 @@ void playHuman(Boggle &board) {
             isValidWord = board.humanWordSearch(humanWord);
             // update user state
             // update boggle board gui
-            BoggleGUI::recordWord(humanWord, BoggleGUI::HUMAN);
             
             clearConsole();
             printStatusMessage(isValidWord, humanWord);
@@ -78,6 +77,7 @@ void printStatusMessage(bool isValidWord, string word) {
     
     if(isValidWord) {
         message = string("You found a new word! \"") + toUpperCase(word) + string("\"");
+        BoggleGUI::recordWord(word, BoggleGUI::HUMAN);
     } else {
         message = "You must enter an unfound 4+ letter word from the dictionary.";
     }
