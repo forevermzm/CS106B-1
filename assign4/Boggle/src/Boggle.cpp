@@ -92,48 +92,65 @@ char Boggle::getLetter(int row, int col) {
  * the Boggle board for.
  */
 bool Boggle::checkWord(string word) {
-    if (word.length() < 4 || 
-        !boggleDictionary.contains(word) ||
-        humanWords.contains(word)) return false;
-    return true;
+    return (word.length() > 4 
+            && boggleDictionary.contains(word) 
+            && !humanWords.contains(word));
 }
 
 /**
  * @brief Boggle::humanWordSearch
- * @param word
- * @return 
+ * Wrapper function for recursive search on boggle board for
+ * human-inputted word. Sets up Boggle state for each search and 
+ * only searches if the word is okay to search for (based on 
+ * checkWord's output). Then handles scoring once word has been
+ * found on the board.
+ * @param word - User inputted word. Guaranteed to be lower case.
+ * @return - Returns whether valid word was found on the board.
  */
 bool Boggle::humanWordSearch(string word) {
+    // if word isn't worth checking, don't look
     if(!checkWord(word)) return false;
     
-    BoggleGUI::clearHighlighting();
+    // empty chosen human squares set
     chosenHumanSquares.clear();
+    
+    // if word isn't on the board, return false
     if(!recursiveHumanSearch(toUpperCase(word), -1)) return false;
     
-    // add word to score and used words set
+    // otherwise, word is good so add word to score and used words set
     humansScore += word.length() - 3;
     humanWords.add(word);
-    return true;   // remove this
+    return true;
 }
 
 /**
  * @brief Boggle::recursiveHumanSearch
- * @param word
- * @param currIndex
- * @return 
+ * Searches the board for the inputted word using recursive backtracking.
+ * Chooses a square to search from based on list of all available squares
+ * from the current location, then tries to solve from there and backs up
+ * if needed.
+ * @param word - User inputted word, guaranteed to be lower case and valid.
+ * @param currIndex - Index of the current square (indexed from 0-15 based
+ * on string representation of board).
+ * @return - Returns whether the word was found.
  */
 bool Boggle::recursiveHumanSearch(string word, int currIndex) {
     if (word.length() == 0) return true;
     
+    // for all possible squares based on the current square's location - 
     for (int possibleIndex : availableSquares(currIndex)) {
-        cout << "checking " << possibleIndex << " from currIndex of " << currIndex << endl;
+        // highlight letters on GUI
         BoggleGUI::setHighlighted(possibleIndex / 4, possibleIndex % 4, true);
         BoggleGUI::setAnimationDelay(100);
+        
+        // if the current square's letter matches the first letter of the search word, proceed
         if (board[possibleIndex] == word[0]) {
+            // make the choice
             currIndex = possibleIndex;
             chosenHumanSquares.add(currIndex);
+            // try solving from here
             if (recursiveHumanSearch(word.substr(1, string::npos), currIndex)) return true;
-            // unmake
+            // didn't work out, so unmake the choice
             chosenHumanSquares.remove(currIndex); 
             BoggleGUI::setHighlighted(possibleIndex / 4, possibleIndex % 4, false);
         }
@@ -145,8 +162,11 @@ bool Boggle::recursiveHumanSearch(string word, int currIndex) {
 
 /**
  * @brief Boggle::availableSquares
- * @param currIndex
- * @return 
+ * Returns a vector of all the neighboring square indexes based on the current
+ * location on the board.
+ * @param currIndex - Current location on the board. If -1, then searching has not
+ * started yet, so return the indexes of the entire board.
+ * @return - Vector of neighboring squares' indexes
  */
 Vector<int> Boggle::availableSquares(int currIndex) {
     Vector<int> availableSquares;
@@ -208,7 +228,21 @@ int Boggle::getScoreComputer() {
     return 0;   // remove this
 }
 
+/**
+ * @brief operator <<
+ * Prints board in 4x4 format when cout-ed to the console.
+ * @param out
+ * @param boggle
+ * @return 
+ */
 ostream& operator<<(ostream& out, Boggle& boggle) {
-    // TODO: implement
+    int rows = sqrt(Boggle::BOARD_SIZE);
+    int cols = rows;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            out << boggle.getLetter(i, j);
+        }
+        out << endl;
+    }
     return out;
 }

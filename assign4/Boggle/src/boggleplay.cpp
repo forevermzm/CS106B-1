@@ -12,7 +12,6 @@
 
 Boggle setUpBoard(Lexicon& dictionary);
 bool isValidBoardInput(string& input);
-void printBoard(Boggle& board);
 void printHumanState(Boggle &board);
 void playHuman(Boggle &board);
 void printStatusMessage(bool isValidWord, string word);
@@ -47,7 +46,7 @@ void playHuman(Boggle &board) {
     
     while(humanHasWords) {
         // print current state of game
-        printBoard(board);
+        cout << board << endl;
         printHumanState(board);
         
         // prompt for word
@@ -58,6 +57,7 @@ void playHuman(Boggle &board) {
         } else {
             humanWord = toLowerCase(humanWord);
             // check to see if valid word
+            BoggleGUI::clearHighlighting();
             isValidWord = board.humanWordSearch(humanWord);
             // update user state
             // update boggle board gui
@@ -132,22 +132,6 @@ bool isValidBoardInput(string& input) {
     
     // passed all checks!
     return true;
-}
-
-/**
- * @brief printBoard
- * Prints current board layout to console.
- * @param board - Boggle instance being used for the current game.
- */
-void printBoard(Boggle& board) {
-    int rows = sqrt(Boggle::BOARD_SIZE);
-    int cols = rows;
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            cout << board.getLetter(i, j);
-        }
-        cout << endl;
-    }
 }
 
 /**
