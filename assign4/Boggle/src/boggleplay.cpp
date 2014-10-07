@@ -31,6 +31,7 @@ void playOneGame(Lexicon& dictionary) {
     BoggleGUI::labelAllCubes(board.getCurrentBoard());
     
     cout << "It's your turn!" << endl;
+    BoggleGUI::setStatusMessage("It's your turn!");
     playHuman(board);
 }
 

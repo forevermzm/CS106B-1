@@ -7,6 +7,7 @@
 #include "Boggle.h"
 #include <cmath>
 #include "error.h"
+#include "bogglegui.h"
 
 // letters on all 6 sides of every cube
 static string CUBES[16] = {
@@ -47,6 +48,7 @@ Boggle::Boggle(Lexicon& dictionary, string boardText) {
         }
     } 
     boggleDictionary = dictionary;
+    humansScore = 0;
 }
 
 /**
@@ -96,23 +98,101 @@ bool Boggle::checkWord(string word) {
     return true;
 }
 
+/**
+ * @brief Boggle::humanWordSearch
+ * @param word
+ * @return 
+ */
 bool Boggle::humanWordSearch(string word) {
-    if (!checkWord(word)) return false;
-    // TODO: implement
+    if(!checkWord(word)) return false;
     
+    BoggleGUI::clearHighlighting();
+    chosenHumanSquares.clear();
+    if(!recursiveHumanSearch(toUpperCase(word), -1)) return false;
+    
+    // add word to score and used words set
     humansScore += word.length() - 3;
     humanWords.add(word);
     return true;   // remove this
 }
 
+/**
+ * @brief Boggle::recursiveHumanSearch
+ * @param word
+ * @param currIndex
+ * @return 
+ */
+bool Boggle::recursiveHumanSearch(string word, int currIndex) {
+    if (word.length() == 0) return true;
+    
+    for (int possibleIndex : availableSquares(currIndex)) {
+        cout << "checking " << possibleIndex << " from currIndex of " << currIndex << endl;
+        BoggleGUI::setHighlighted(possibleIndex / 4, possibleIndex % 4, true);
+        BoggleGUI::setAnimationDelay(100);
+        if (board[possibleIndex] == word[0]) {
+            currIndex = possibleIndex;
+            chosenHumanSquares.add(currIndex);
+            if (recursiveHumanSearch(word.substr(1, string::npos), currIndex)) return true;
+            // unmake
+            chosenHumanSquares.remove(currIndex); 
+            BoggleGUI::setHighlighted(possibleIndex / 4, possibleIndex % 4, false);
+        }
+        BoggleGUI::setHighlighted(possibleIndex / 4, possibleIndex % 4, false);
+    }
+    
+    return false;
+}
+
+/**
+ * @brief Boggle::availableSquares
+ * @param currIndex
+ * @return 
+ */
+Vector<int> Boggle::availableSquares(int currIndex) {
+    Vector<int> availableSquares;
+    
+    if (currIndex == -1) { // first layer of recursion, return all squares
+        for (int i = 0; i < 16; i++) {
+            availableSquares.add(i);
+        }
+    } else { // return all in-bounds and unchosen neighboring squares
+        int numRows = sqrt(BOARD_SIZE);
+        int currRow = currIndex % 4;
+        int currCol = currIndex / 4; 
+        
+        for (int i = max(0, currRow - 1); i <= min(numRows - 1, currRow + 1); i++) { // row
+            for (int j = max(0, currCol - 1); j <= min(numRows - 1, currCol + 1); j++) { // column
+                int neighborIndex = i + j * 4;
+                if (neighborIndex == currIndex) continue; // don't check the square itself
+                if (chosenHumanSquares.contains(neighborIndex)) continue; // don't check squares that have already been marked
+                availableSquares.add(neighborIndex);
+            } 
+        }
+    }
+    
+    return availableSquares;
+}
+
+/**
+ * @brief Boggle::humanScore
+ * @return 
+ */
 int Boggle::humanScore() {
     return humansScore;
 }
 
+/**
+ * @brief Boggle::getNumHumanWords
+ * @return 
+ */
 int Boggle::getNumHumanWords() {
     return humanWords.size();
 }
 
+/**
+ * @brief Boggle::getHumanWords
+ * @return 
+ */
 string Boggle::getHumanWords() {
     return humanWords.toString();
 }

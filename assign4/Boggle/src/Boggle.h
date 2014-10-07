@@ -30,6 +30,8 @@ public:
     string getCurrentBoard();
     int getNumHumanWords();
     string getHumanWords();
+    bool recursiveHumanSearch(string word, int currIndex);
+    Vector<int> availableSquares(int currIndex);
     
     static const int BOARD_SIZE = 16;
 
@@ -38,6 +40,7 @@ private:
     Lexicon boggleDictionary;
     Set<string> humanWords;
     int humansScore;
+    Set<int> chosenHumanSquares;
 };
 
 ostream& operator<<(ostream& out, Boggle& boggle);

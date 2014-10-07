@@ -681,7 +681,15 @@ boggleplay.o: ../Boggle/src/boggleplay.cpp ../Boggle/lib/StanfordCPPLib/lexicon.
 		../Boggle/lib/StanfordCPPLib/stack.h \
 		../Boggle/lib/StanfordCPPLib/vector.h \
 		../Boggle/lib/StanfordCPPLib/random.h \
-		../Boggle/lib/StanfordCPPLib/strlib.h
+		../Boggle/lib/StanfordCPPLib/strlib.h \
+		../Boggle/lib/StanfordCPPLib/simpio.h \
+		../Boggle/src/Boggle.h \
+		../Boggle/lib/StanfordCPPLib/shuffle.h \
+		../Boggle/src/bogglegui.h \
+		../Boggle/lib/StanfordCPPLib/gwindow.h \
+		../Boggle/lib/StanfordCPPLib/gtypes.h \
+		../Boggle/lib/StanfordCPPLib/point.h \
+		../Boggle/lib/StanfordCPPLib/console.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o boggleplay.o ../Boggle/src/boggleplay.cpp
 
 basicgraph.o: ../Boggle/lib/StanfordCPPLib/basicgraph.cpp ../Boggle/lib/StanfordCPPLib/basicgraph.h \
