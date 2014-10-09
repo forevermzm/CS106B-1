@@ -92,7 +92,7 @@ char Boggle::getLetter(int row, int col) {
  * the Boggle board for.
  */
 bool Boggle::checkWord(string word) {
-    return (word.length() > 4 
+    return (word.length() >= 4 
             && boggleDictionary.contains(word) 
             && !humanWords.contains(word));
 }
@@ -115,11 +115,12 @@ bool Boggle::humanWordSearch(string word) {
     chosenHumanSquares.clear();
     
     // if word isn't on the board, return false
-    if(!recursiveHumanSearch(toUpperCase(word), -1)) return false;
+    if(!findWordOnBoard(toUpperCase(word), -1)) return false;
     
     // otherwise, word is good so add word to score and used words set
+    chosenHumanSquares.clear();
     humansScore += word.length() - 3;
-    humanWords.add(word);
+    humanWords.add(toUpperCase(word));
     return true;
 }
 
@@ -134,7 +135,7 @@ bool Boggle::humanWordSearch(string word) {
  * on string representation of board).
  * @return - Returns whether the word was found.
  */
-bool Boggle::recursiveHumanSearch(string word, int currIndex) {
+bool Boggle::findWordOnBoard(string word, int currIndex) {
     if (word.length() == 0) return true;
     
     // for all possible squares based on the current square's location - 
@@ -149,7 +150,7 @@ bool Boggle::recursiveHumanSearch(string word, int currIndex) {
             currIndex = possibleIndex;
             chosenHumanSquares.add(currIndex);
             // try solving from here
-            if (recursiveHumanSearch(word.substr(1, string::npos), currIndex)) return true;
+            if (findWordOnBoard(word.substr(1, string::npos), currIndex)) return true;
             // didn't work out, so unmake the choice
             chosenHumanSquares.remove(currIndex); 
             BoggleGUI::setHighlighted(possibleIndex / 4, possibleIndex % 4, false);
@@ -172,7 +173,7 @@ Vector<int> Boggle::availableSquares(int currIndex) {
     Vector<int> availableSquares;
     
     if (currIndex == -1) { // first layer of recursion, return all squares
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 17; i++) {
             availableSquares.add(i);
         }
     } else { // return all in-bounds and unchosen neighboring squares
@@ -183,8 +184,9 @@ Vector<int> Boggle::availableSquares(int currIndex) {
         for (int i = max(0, currRow - 1); i <= min(numRows - 1, currRow + 1); i++) { // row
             for (int j = max(0, currCol - 1); j <= min(numRows - 1, currCol + 1); j++) { // column
                 int neighborIndex = i + j * 4;
-                if (neighborIndex == currIndex) continue; // don't check the square itself
-                if (chosenHumanSquares.contains(neighborIndex)) continue; // don't check squares that have already been marked
+                if (neighborIndex == currIndex) continue;      // don't check the square itself
+                if (chosenHumanSquares.contains(neighborIndex) // don't check squares that have already been marked
+                        || chosenComputerSquares.contains(neighborIndex)) continue; 
                 availableSquares.add(neighborIndex);
             } 
         }
@@ -218,9 +220,40 @@ string Boggle::getHumanWords() {
 }
 
 Set<string> Boggle::computerWordSearch() {
-    // TODO: implement
-    Set<string> result;   // remove this
-    return result;        // remove this
+    Set<string> result; 
+    
+    findAllWordsOnBoard(result, -1, "");
+    return result;      
+}
+
+bool Boggle::findAllWordsOnBoard(Set<string>& foundWords, int currIndex, string currWord) {
+    for (int possibleIndex : availableSquares(currIndex)) {
+        if (possibleIndex == 16) return true;
+        
+//        cout << "[" << currIndex << "] " << currWord << ": checking " << board[possibleIndex] << " from " << board[currIndex] << endl;
+//        cout << "BLAH" << endl;
+//        cout << chosenComputerSquares << endl;
+        
+        // make the choice
+        currWord += board[possibleIndex];
+        chosenComputerSquares.add(possibleIndex);
+        
+        if (boggleDictionary.contains(currWord) && currWord.length() >= 4) { // it's an actual word!
+            cout << currWord << " is a real word!" << endl;
+            foundWords.add(currWord);
+            currIndex = possibleIndex;
+            findAllWordsOnBoard(foundWords, currIndex, currWord);
+        } else if (boggleDictionary.containsPrefix(currWord)) { // keep searching but good start
+//            cout << currWord << " is a valid prefix!" << endl;
+            currIndex = possibleIndex;
+            findAllWordsOnBoard(foundWords, currIndex, currWord);
+        }
+        
+        // unmake choice
+        currWord = currWord.substr(0, currWord.length()-1);
+        chosenComputerSquares.remove(possibleIndex);
+    }
+    return false;
 }
 
 int Boggle::getScoreComputer() {

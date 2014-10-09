@@ -14,6 +14,7 @@ Boggle setUpBoard(Lexicon& dictionary);
 bool isValidBoardInput(string& input);
 void printHumanState(Boggle &board);
 void playHuman(Boggle &board);
+void playComputer(Boggle &board);
 void printStatusMessage(bool isValidWord, string word);
 
 /**
@@ -32,10 +33,26 @@ void playOneGame(Lexicon& dictionary) {
     cout << "It's your turn!" << endl;
     BoggleGUI::setStatusMessage("It's your turn!");
     playHuman(board);
+    
+    cout << "It's my turn!" << endl;
+    BoggleGUI::setStatusMessage("It's my turn!");
+    playComputer(board);
+}
+
+/**
+ * @brief playComputer
+ * @param board
+ */
+void playComputer(Boggle &board) {
+    Set<string> computerWords = board.computerWordSearch();
+    cout << computerWords << endl;
 }
 
 /**
  * @brief playHuman
+ * Manages interaction with human to input words and tell
+ * Boggle board instance to search for the words. Then prints
+ * out proper messages alerting user whether the word was valid.
  * @param board
  */
 void playHuman(Boggle &board) {
@@ -59,8 +76,6 @@ void playHuman(Boggle &board) {
             // check to see if valid word
             BoggleGUI::clearHighlighting();
             isValidWord = board.humanWordSearch(humanWord);
-            // update user state
-            // update boggle board gui
             
             clearConsole();
             printStatusMessage(isValidWord, humanWord);
@@ -141,7 +156,6 @@ bool isValidBoardInput(string& input) {
  * @param board - Boggle instance being used for the current game.
  */
 void printHumanState(Boggle &board) {
-    cout << endl;
     cout << "Your words (" << board.getNumHumanWords() << "): " 
          << board.getHumanWords() << endl;
     cout << "Your score: " << board.humanScore() << endl;

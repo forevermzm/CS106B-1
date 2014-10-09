@@ -14,6 +14,7 @@
 #include "strlib.h"
 #include "shuffle.h"
 #include "random.h"
+#include "stack.h"
 
 using namespace std;
 
@@ -30,8 +31,9 @@ public:
     string getCurrentBoard();
     int getNumHumanWords();
     string getHumanWords();
-    bool recursiveHumanSearch(string word, int currIndex);
+    bool findWordOnBoard(string word, int currIndex);
     Vector<int> availableSquares(int currIndex);
+    bool findAllWordsOnBoard(Set<string>& foundWords, int currIndex, string currWord);
     
     static const int BOARD_SIZE = 16;
 
@@ -41,6 +43,7 @@ private:
     Set<string> humanWords;
     int humansScore;
     Set<int> chosenHumanSquares;
+    Set<int> chosenComputerSquares;
 };
 
 ostream& operator<<(ostream& out, Boggle& boggle);
