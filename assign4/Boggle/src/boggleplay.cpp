@@ -1,8 +1,6 @@
-// This is a .cpp file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
+// .cpp file of boggleplay, which manages user interactions for
+// one game of boggle and refers to the Boggle class for data and
+// fucntionality.
 
 #include "lexicon.h"
 #include "simpio.h"
@@ -15,10 +13,16 @@ bool isValidBoardInput(string& input);
 void printHumanState(Boggle &board);
 void playHuman(Boggle &board);
 void playComputer(Boggle &board);
-void printStatusMessage(bool isValidWord, string word);
+void printHumanStatusMessage(bool isValidWord, string word);
+void gameResult(Boggle& board);
+void printSetItem(string item);
+void printToConsoleAndGUI(string message);
 
 /**
  * @brief playOneGame
+ * Manages playing of one game of Boggle. Sets up Boggle board and interaction,
+ * gets human's words, and calls search function for computer. Then prints out
+ * each player's scores and the result of the game.
  * @param dictionary
  */
 void playOneGame(Lexicon& dictionary) {
@@ -30,22 +34,51 @@ void playOneGame(Lexicon& dictionary) {
     clearConsole();
     BoggleGUI::labelAllCubes(board.getCurrentBoard());
     
+    // human
     cout << "It's your turn!" << endl;
     BoggleGUI::setStatusMessage("It's your turn!");
     playHuman(board);
     
-    cout << "It's my turn!" << endl;
+    // computer
+    cout << endl << "It's my turn!" << endl;
     BoggleGUI::setStatusMessage("It's my turn!");
     playComputer(board);
+    
+    // game result
+    gameResult(board);
+}
+
+/**
+ * @brief gameResult
+ * Prints game result on GUI and console.
+ * @param board - Current Boggle board instance.
+ */
+void gameResult(Boggle& board) {
+    string result;
+    if (board.getScoreComputer() > board.humanScore()) { // computer wins
+        result = "Ha ha ha, I destroyed you. Better luck next time, puny human!";
+    } else { // human wins
+        result = "WOW, you defeated me! Congratulations!";
+    }
+    
+    printToConsoleAndGUI(result);
 }
 
 /**
  * @brief playComputer
- * @param board
+ * Calls computer search function from Boggle class and then prints out
+ * the search results and score.
+ * @param board - Current Boggle board instance.
  */
 void playComputer(Boggle &board) {
     Set<string> computerWords = board.computerWordSearch();
-    cout << computerWords << endl;
+    cout << "My words: (" << computerWords.size() << "): " << computerWords << endl;
+    cout << "My score: " << board.getScoreComputer() << endl;
+    
+    for (string word : computerWords) {
+        BoggleGUI::recordWord(word, BoggleGUI::COMPUTER);
+    }
+    BoggleGUI::setScore(board.getScoreComputer(), BoggleGUI::COMPUTER);
 }
 
 /**
@@ -53,7 +86,7 @@ void playComputer(Boggle &board) {
  * Manages interaction with human to input words and tell
  * Boggle board instance to search for the words. Then prints
  * out proper messages alerting user whether the word was valid.
- * @param board
+ * @param board - Current Boggle board instance.
  */
 void playHuman(Boggle &board) {
     // get and display words from human
@@ -78,17 +111,20 @@ void playHuman(Boggle &board) {
             isValidWord = board.humanWordSearch(humanWord);
             
             clearConsole();
-            printStatusMessage(isValidWord, humanWord);
+            printHumanStatusMessage(isValidWord, humanWord);
         }
     }
 }
 
 /**
- * @brief printStatusMessage
- * @param isValidWord
- * @param word
+ * @brief printHumanStatusMessage
+ * Prints response to a human's input for a possible word based on whether
+ * it is a valid word found on the board or not.
+ * @param isValidWord - Whether the user input is a valid word found on the board.
+ *  Determined by Boggle class functions.
+ * @param word - User inputted word.
  */
-void printStatusMessage(bool isValidWord, string word) {
+void printHumanStatusMessage(bool isValidWord, string word) {
     string message;
     
     if(isValidWord) {
@@ -98,8 +134,7 @@ void printStatusMessage(bool isValidWord, string word) {
         message = "You must enter an unfound 4+ letter word from the dictionary.";
     }
     
-    cout << message << endl;
-    BoggleGUI::setStatusMessage(message);
+    printToConsoleAndGUI(message);
 }
 
 /**
@@ -160,4 +195,14 @@ void printHumanState(Boggle &board) {
          << board.getHumanWords() << endl;
     cout << "Your score: " << board.humanScore() << endl;
     BoggleGUI::setScore(board.humanScore(), BoggleGUI::HUMAN);
+}
+
+/**
+ * @brief printToConsoleAndGUI
+ * Prints the given message to the console and the GUI.
+ * @param message
+ */
+void printToConsoleAndGUI(string message) {
+    cout << message << endl;
+    BoggleGUI::setStatusMessage(message);
 }

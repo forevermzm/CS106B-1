@@ -1,8 +1,6 @@
-// This is a .cpp file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
+// .cpp file of Boggle class. Implements functions that keep track
+// of data from the two players of a game and searches the board
+// for particular words for both players.
 
 #include "Boggle.h"
 #include <cmath>
@@ -26,16 +24,6 @@ static string BIG_BOGGLE_CUBES[25] = {
    "FIPRSY", "GORRVW", "HIPRRY", "NOOTUW", "OOOTTU"
 };
 
-/**
- * @brief Boggle::Boggle
- * Boggle class constructor. Sets up a randomly or user generated initial
- * board state and sets up dictionary.
- * @param dictionary - Lexicon passed in by reference from bogglemain.cpp.
- * Boggle class copies reference to Lexicon for use in the rest of the class.
- * @param boardText - Guaranteed a valid, all caps, 16 character long
- * string of letters OR an empty string (signifying the user wants a 
- * random board).
- */
 Boggle::Boggle(Lexicon& dictionary, string boardText) {
     if (boardText.empty()) { // generate random board
         shuffle(CUBES, BOARD_SIZE);
@@ -49,28 +37,14 @@ Boggle::Boggle(Lexicon& dictionary, string boardText) {
     } 
     boggleDictionary = dictionary;
     humansScore = 0;
+    computersScore = 0;
 }
 
-/**
- * @brief Boggle::getCurrentBoard
- * Returns string of letters on the Boggle board. For use in setting
- * up the initial boggle gui board.
- * @return - string of letters on the Boggle board.
- */
+
 string Boggle::getCurrentBoard() {
     return board;
 }
 
-/**
- * @brief Boggle::getLetter
- * Gets letter from Boggle board at specified row and column.
- * If row or column is out of bounds, throws an exception and 
- * returns an empty character.
- * @param row - row
- * @param col - column
- * @return - Return specified letter from Boggle board or empty
- * character if location cannot be accessed.
- */
 char Boggle::getLetter(int row, int col) {
     try {
         if (row >= sqrt(BOARD_SIZE) || col >= sqrt(BOARD_SIZE)) error("out of bounds");
@@ -80,33 +54,13 @@ char Boggle::getLetter(int row, int col) {
     }
 }
 
-/**
- * @brief Boggle::checkWord
- * Returns if user inputted word is suitable to search for
- * on the Boggle board. Checks if input is long enough, if
- * input if a valid English word, and if input has already
- * been used by the human.
- * @param word - User inputted word. Guaranteed to be lower
- * case.
- * @return - Returns whether or not word is worth searching
- * the Boggle board for.
- */
 bool Boggle::checkWord(string word) {
     return (word.length() >= 4 
             && boggleDictionary.contains(word) 
             && !humanWords.contains(word));
 }
 
-/**
- * @brief Boggle::humanWordSearch
- * Wrapper function for recursive search on boggle board for
- * human-inputted word. Sets up Boggle state for each search and 
- * only searches if the word is okay to search for (based on 
- * checkWord's output). Then handles scoring once word has been
- * found on the board.
- * @param word - User inputted word. Guaranteed to be lower case.
- * @return - Returns whether valid word was found on the board.
- */
+
 bool Boggle::humanWordSearch(string word) {
     // if word isn't worth checking, don't look
     if(!checkWord(word)) return false;
@@ -124,22 +78,13 @@ bool Boggle::humanWordSearch(string word) {
     return true;
 }
 
-/**
- * @brief Boggle::recursiveHumanSearch
- * Searches the board for the inputted word using recursive backtracking.
- * Chooses a square to search from based on list of all available squares
- * from the current location, then tries to solve from there and backs up
- * if needed.
- * @param word - User inputted word, guaranteed to be lower case and valid.
- * @param currIndex - Index of the current square (indexed from 0-15 based
- * on string representation of board).
- * @return - Returns whether the word was found.
- */
 bool Boggle::findWordOnBoard(string word, int currIndex) {
     if (word.length() == 0) return true;
     
     // for all possible squares based on the current square's location - 
     for (int possibleIndex : availableSquares(currIndex)) {
+        if (possibleIndex >= 16) continue; // out of bounds, skip checking this square
+                
         // highlight letters on GUI
         BoggleGUI::setHighlighted(possibleIndex / 4, possibleIndex % 4, true);
         BoggleGUI::setAnimationDelay(100);
@@ -161,19 +106,11 @@ bool Boggle::findWordOnBoard(string word, int currIndex) {
     return false;
 }
 
-/**
- * @brief Boggle::availableSquares
- * Returns a vector of all the neighboring square indexes based on the current
- * location on the board.
- * @param currIndex - Current location on the board. If -1, then searching has not
- * started yet, so return the indexes of the entire board.
- * @return - Vector of neighboring squares' indexes
- */
 Vector<int> Boggle::availableSquares(int currIndex) {
     Vector<int> availableSquares;
     
     if (currIndex == -1) { // first layer of recursion, return all squares
-        for (int i = 0; i < 17; i++) {
+        for (int i = 0; i < 17; i++) { // returns one out of bounds square as marker to computer search that it is done
             availableSquares.add(i);
         }
     } else { // return all in-bounds and unchosen neighboring squares
@@ -195,56 +132,41 @@ Vector<int> Boggle::availableSquares(int currIndex) {
     return availableSquares;
 }
 
-/**
- * @brief Boggle::humanScore
- * @return 
- */
 int Boggle::humanScore() {
     return humansScore;
 }
 
-/**
- * @brief Boggle::getNumHumanWords
- * @return 
- */
 int Boggle::getNumHumanWords() {
     return humanWords.size();
 }
 
-/**
- * @brief Boggle::getHumanWords
- * @return 
- */
 string Boggle::getHumanWords() {
     return humanWords.toString();
 }
 
 Set<string> Boggle::computerWordSearch() {
     Set<string> result; 
-    
     findAllWordsOnBoard(result, -1, "");
-    return result;      
+    return result - humanWords;      
 }
 
 bool Boggle::findAllWordsOnBoard(Set<string>& foundWords, int currIndex, string currWord) {
     for (int possibleIndex : availableSquares(currIndex)) {
-        if (possibleIndex == 16) return true;
-        
-//        cout << "[" << currIndex << "] " << currWord << ": checking " << board[possibleIndex] << " from " << board[currIndex] << endl;
-//        cout << "BLAH" << endl;
-//        cout << chosenComputerSquares << endl;
+        if (possibleIndex == 16) return true; // end of the board
         
         // make the choice
         currWord += board[possibleIndex];
         chosenComputerSquares.add(possibleIndex);
         
-        if (boggleDictionary.contains(currWord) && currWord.length() >= 4) { // it's an actual word!
-            cout << currWord << " is a real word!" << endl;
+        // it's an actual word!
+        if (boggleDictionary.contains(currWord) && currWord.length() >= 4) { 
             foundWords.add(currWord);
-            currIndex = possibleIndex;
-            findAllWordsOnBoard(foundWords, currIndex, currWord);
-        } else if (boggleDictionary.containsPrefix(currWord)) { // keep searching but good start
-//            cout << currWord << " is a valid prefix!" << endl;
+            BoggleGUI::recordWord(currWord, BoggleGUI::COMPUTER);
+            computersScore += currWord.length() - 3;
+        }
+        
+        // keep searching but good start; can be applied to existing word prefixes
+        if (boggleDictionary.containsPrefix(currWord)) { 
             currIndex = possibleIndex;
             findAllWordsOnBoard(foundWords, currIndex, currWord);
         }
@@ -257,17 +179,9 @@ bool Boggle::findAllWordsOnBoard(Set<string>& foundWords, int currIndex, string 
 }
 
 int Boggle::getScoreComputer() {
-    // TODO: implement
-    return 0;   // remove this
+    return computersScore - humansScore;
 }
 
-/**
- * @brief operator <<
- * Prints board in 4x4 format when cout-ed to the console.
- * @param out
- * @param boggle
- * @return 
- */
 ostream& operator<<(ostream& out, Boggle& boggle) {
     int rows = sqrt(Boggle::BOARD_SIZE);
     int cols = rows;
