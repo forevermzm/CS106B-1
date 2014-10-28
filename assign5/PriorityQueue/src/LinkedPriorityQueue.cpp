@@ -7,13 +7,18 @@
 #include "LinkedPriorityQueue.h"
 
 LinkedPriorityQueue::LinkedPriorityQueue() {
-    // TODO: implement
-
+    head = NULL;
 }
 
 LinkedPriorityQueue::~LinkedPriorityQueue() {
-    // TODO: implement
-
+    ListNode *current = head;
+    ListNode *next = NULL;
+    
+    while (current != NULL) {
+        next = current->next;
+        delete current;
+        current = next;
+    }
 }
 
 void LinkedPriorityQueue::changePriority(string value, int newPriority) {
@@ -32,8 +37,8 @@ string LinkedPriorityQueue::dequeue() {
 }
 
 void LinkedPriorityQueue::enqueue(string value, int priority) {
-    // TODO: implement
-
+    ListNode newNode = ListNode(value, priority);
+    
 }
 
 bool LinkedPriorityQueue::isEmpty() const {

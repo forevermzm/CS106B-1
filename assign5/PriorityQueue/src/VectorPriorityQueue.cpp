@@ -17,46 +17,111 @@ VectorPriorityQueue::~VectorPriorityQueue() {
 }
 
 void VectorPriorityQueue::changePriority(string value, int newPriority) {
-    // TODO: implement
+    try {
+        for (PQEntry entry : priorityQueue) { // search the entire vector
+            if (entry.value == value) {
+                if (entry.priority < newPriority) { // existing priority is higher, keep looking
+                    error("existing priority is higher");
+                } else { // change priority, stop looking
+                    entry.priority = newPriority;
+                    return;
+                }
+            }
+        }
+        error("value not found");
+    } catch (ErrorException& error) {
+        
+    }
+}
 
+int VectorPriorityQueue::getMostUrgentElement() const {
+    int mostUrgentIndex = 0;
+    PQEntry mostUrgentEntry = priorityQueue[mostUrgentIndex];
+    PQEntry currentEntry;
+    
+    for (int i = 0; i < priorityQueue.size(); i++) {
+        currentEntry = priorityQueue[i];
+        if (mostUrgentEntry > currentEntry) {
+            mostUrgentIndex = i;
+            mostUrgentEntry = priorityQueue[mostUrgentIndex];
+        }
+    }
+    
+    return mostUrgentIndex;
 }
 
 void VectorPriorityQueue::clear() {
-    // TODO: implement
-
+    priorityQueue.clear();
 }
 
 string VectorPriorityQueue::dequeue() {
-    // TODO: implement
-    return "";   // remove this
+    string value;
+    try {
+        if (priorityQueue.isEmpty()) {
+            error("priority queue is empty");
+            value = "";
+        } else {
+            int mostUrgentIndex = getMostUrgentElement();
+            value = priorityQueue[mostUrgentIndex].value;
+            priorityQueue.remove(mostUrgentIndex);
+        }
+    } catch (ErrorException& error) {
+        return "";
+    }
+    return value;
 }
 
 void VectorPriorityQueue::enqueue(string value, int priority) {
-    // TODO: implement
-
+    PQEntry newEntry = PQEntry(value, priority);
+    priorityQueue.add(newEntry);
 }
 
 bool VectorPriorityQueue::isEmpty() const {
-    // TODO: implement
-    return false;   // remove this
+    return priorityQueue.isEmpty();
 }
 
 string VectorPriorityQueue::peek() const {
-    // TODO: implement
-    return "";   // remove this
+    try {
+        if (priorityQueue.isEmpty()) {
+            error("priority queue is empty");
+            return "";
+        } else {
+            int mostUrgentIndex = getMostUrgentElement();
+            return priorityQueue[mostUrgentIndex].value;
+        }
+    } catch (ErrorException& error) {
+        return "";
+    }
 }
 
 int VectorPriorityQueue::peekPriority() const {
-    // TODO: implement
-    return 0;   // remove this
+    try {
+        if (priorityQueue.isEmpty()) {
+            error("priority queue is empty");
+            return 0;
+        } else {
+            int mostUrgentIndex = getMostUrgentElement();
+            return priorityQueue[mostUrgentIndex].priority;
+        }
+    } catch (ErrorException& error) {
+        return 0;
+    }
 }
 
 int VectorPriorityQueue::size() const {
-    // TODO: implement
-    return 0;   // remove this
+    return priorityQueue.size();
+}
+
+PQEntry VectorPriorityQueue::getElemAtIndex(int index) const {
+    return priorityQueue[index];
 }
 
 ostream& operator<<(ostream& out, const VectorPriorityQueue& queue) {
-    // TODO: implement
+    out << "{";
+    for (int i = 0; i < queue.size(); i++) {
+        out << queue.getElemAtIndex(i);
+        if (i < queue.size() - 1) out << ", ";
+    }
+    out << "}";
     return out;
 }

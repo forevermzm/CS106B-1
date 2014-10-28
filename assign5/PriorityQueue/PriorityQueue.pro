@@ -66,6 +66,8 @@ OTHER_FILES = $$files(res/*)
 QMAKE_EXTRA_TARGETS += copyResources
 POST_TARGETDEPS += copyResources
 
+QMAKE_MAC_SDK = macosx10.9
+
 macx {
     cache()
 }

@@ -29,8 +29,9 @@ public:
     friend ostream& operator <<(ostream& out, const VectorPriorityQueue& queue);
 
 private:
-    // TODO: add any other member functions/variables necessary
-
+    Vector<PQEntry> priorityQueue;
+    int getMostUrgentElement() const;
+    PQEntry getElemAtIndex(int index) const;
 };
 
 #endif
