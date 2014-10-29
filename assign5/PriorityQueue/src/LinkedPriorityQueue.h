@@ -12,6 +12,7 @@
 #include <string>
 #include "ListNode.h"
 #include "PQEntry.h"
+#include "error.h"
 using namespace std;
 
 /*
