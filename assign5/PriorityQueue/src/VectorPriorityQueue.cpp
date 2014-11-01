@@ -17,13 +17,17 @@ VectorPriorityQueue::~VectorPriorityQueue() {
 }
 
 void VectorPriorityQueue::changePriority(string value, int newPriority) {
+    cout << "changing priority" << endl;
     try {
-        for (PQEntry entry : priorityQueue) { // search the entire vector
-            if (entry.value == value) {
-                if (entry.priority < newPriority) { // existing priority is higher, keep looking
+        PQEntry *entry;
+        for (int i = 0; i < priorityQueue.size(); i++) {
+            entry = &priorityQueue[i];
+            if (entry->value == value) {
+                if (entry->priority < newPriority) {
                     error("existing priority is higher");
-                } else { // change priority, stop looking
-                    entry.priority = newPriority;
+                } else {
+                    entry->priority = newPriority;
+                    entry = NULL;
                     return;
                 }
             }
@@ -119,7 +123,7 @@ PQEntry VectorPriorityQueue::getElemAtIndex(int index) const {
 ostream& operator<<(ostream& out, const VectorPriorityQueue& queue) {
     out << "{";
     for (int i = 0; i < queue.size(); i++) {
-        out << queue.getElemAtIndex(i);
+        out << queue.priorityQueue[i];
         if (i < queue.size() - 1) out << ", ";
     }
     out << "}";
