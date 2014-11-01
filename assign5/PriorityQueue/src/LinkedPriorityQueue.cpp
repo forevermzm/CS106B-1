@@ -52,17 +52,20 @@ void LinkedPriorityQueue::clear() {
 }
 
 string LinkedPriorityQueue::dequeue() {
+    string returnString;
+    
     try {
         if (isEmpty()) error("dequeuing from an empty PQ");
         ListNode *dequeue = head;
         head = dequeue->next;
-        return dequeue->value;
-        
-        // FREE UP DEQUEUED LIST NODE MEMORY???
+        returnString = dequeue->value;
+        delete dequeue;
         
     } catch (ErrorException &error) {
-        return "";
+        returnString = "";
     }
+    
+    return returnString;
 }
 
 void LinkedPriorityQueue::enqueue(string value, int priority) {

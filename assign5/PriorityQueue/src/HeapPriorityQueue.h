@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include "PQEntry.h"
+#include "error.h"
 using namespace std;
 
 /*
@@ -30,8 +31,14 @@ public:
     friend ostream& operator <<(ostream& out, const HeapPriorityQueue& queue);
 
 private:
-    // TODO: add any other member functions/variables necessary
-
+    PQEntry *arr;
+    int arrSize;
+    int capacity;
+    
+    void resize(int newCapacity);
+    void bubbleDown(int parentIndex, int currIndex);
+    void bubbleUp(int currIndex, int parentIndex, PQEntry entry);
+    bool search(string value, int currIndex, int &returnIndex, int newPriority);
 };
 
 #endif
