@@ -62,7 +62,7 @@ bool HeapPriorityQueue::search(string value, int currIndex, int &returnIndex, in
 }
 
 void HeapPriorityQueue::clear() {
-    delete[] arr; // delete old array TODO: POINTER BEING FREED WAS NOT ALLOCATED
+    delete[] arr; // delete old array
     arr = new PQEntry[capacity]; // create new empty array with same capacity
     
     arrSize = 0; // reset size

@@ -1,26 +1,17 @@
-// This is a .cpp file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
-
 #include "VectorPriorityQueue.h"
 
 VectorPriorityQueue::VectorPriorityQueue() {
-    // TODO: implement
 
 }
 
 VectorPriorityQueue::~VectorPriorityQueue() {
-    // TODO: implement
 
 }
 
 void VectorPriorityQueue::changePriority(string value, int newPriority) {
-    cout << "changing priority" << endl;
     try {
         PQEntry *entry;
-        for (int i = 0; i < priorityQueue.size(); i++) {
+        for (int i = 0; i < priorityQueue.size(); i++) { // loop through vector
             entry = &priorityQueue[i];
             if (entry->value == value) {
                 if (entry->priority < newPriority) {
@@ -39,13 +30,15 @@ void VectorPriorityQueue::changePriority(string value, int newPriority) {
 }
 
 int VectorPriorityQueue::getMostUrgentElement() const {
+    // setup 
     int mostUrgentIndex = 0;
     PQEntry mostUrgentEntry = priorityQueue[mostUrgentIndex];
     PQEntry currentEntry;
     
-    for (int i = 0; i < priorityQueue.size(); i++) {
+    for (int i = 0; i < priorityQueue.size(); i++) { // for each element
         currentEntry = priorityQueue[i];
-        if (mostUrgentEntry > currentEntry) {
+        // compare with most urgent and update if needed
+        if (mostUrgentEntry > currentEntry) { 
             mostUrgentIndex = i;
             mostUrgentEntry = priorityQueue[mostUrgentIndex];
         }
@@ -65,14 +58,14 @@ string VectorPriorityQueue::dequeue() {
             error("priority queue is empty");
             value = "";
         } else {
-            int mostUrgentIndex = getMostUrgentElement();
-            value = priorityQueue[mostUrgentIndex].value;
-            priorityQueue.remove(mostUrgentIndex);
+            int mostUrgentIndex = getMostUrgentElement(); // get most urgent element's index
+            value = priorityQueue[mostUrgentIndex].value; // store value
+            priorityQueue.remove(mostUrgentIndex); // remove most urgent element
         }
     } catch (ErrorException& error) {
         return "";
     }
-    return value;
+    return value; // return value
 }
 
 void VectorPriorityQueue::enqueue(string value, int priority) {
@@ -123,8 +116,8 @@ PQEntry VectorPriorityQueue::getElemAtIndex(int index) const {
 ostream& operator<<(ostream& out, const VectorPriorityQueue& queue) {
     out << "{";
     for (int i = 0; i < queue.size(); i++) {
-        out << queue.priorityQueue[i];
-        if (i < queue.size() - 1) out << ", ";
+        out << queue.getElemAtIndex(i);
+        if (i < queue.size() - 1) out << ", "; // if not the last element
     }
     out << "}";
     return out;
