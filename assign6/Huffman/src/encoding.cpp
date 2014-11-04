@@ -4,12 +4,24 @@
 // TODO: remove this comment header
 
 #include "encoding.h"
-// TODO: include any other headers you need
 
 Map<int, int> buildFrequencyTable(istream& input) {
-    // TODO: implement this function
-    Map<int, int> freqTable;   // this is just a placeholder so it will compile
-    return freqTable;          // this is just a placeholder so it will compile
+    // init variables
+    Map<int, int> freqTable;
+    bool endOfFile = false;
+    char currCharacter;
+    
+    while (!endOfFile) {
+        currCharacter = input.get();
+        if (currCharacter == -1) { // end of file
+            endOfFile = true;
+            freqTable.put(PSEUDO_EOF, 1);
+        } else { // otherwise, valid character
+            freqTable[currCharacter]++;
+        }
+    }
+    
+    return freqTable;
 }
 
 HuffmanNode* buildEncodingTree(const Map<int, int>& freqTable) {
