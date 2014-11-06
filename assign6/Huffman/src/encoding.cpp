@@ -4,13 +4,28 @@
 // TODO: remove this comment header
 
 #include "encoding.h"
+#include "pqueue.h"
+#include "vector.h"
 
+// helper functions
+void makePriorityQueue(PriorityQueue<HuffmanNode*>& pqueue, const Map<int, int>& freqTable); 
+void makeTree(PriorityQueue<HuffmanNode*>& pqueue);
+
+/**
+ * @brief buildFrequencyTable
+ * Counts frequency of characters in an input (string or file), puts them
+ * in a map, and returns the map when it reaches the end of the file. Assumes 
+ * input file exists and can be read. 
+ * @param input - valid input (string or file) from user
+ * @return - map of frequency of each character
+ */
 Map<int, int> buildFrequencyTable(istream& input) {
     // init variables
     Map<int, int> freqTable;
     bool endOfFile = false;
     char currCharacter;
     
+    // count character frequencies
     while (!endOfFile) {
         currCharacter = input.get();
         if (currCharacter == -1) { // end of file
@@ -25,9 +40,37 @@ Map<int, int> buildFrequencyTable(istream& input) {
 }
 
 HuffmanNode* buildEncodingTree(const Map<int, int>& freqTable) {
-    // TODO: implement this function
-    return NULL;   // this is just a placeholder so it will compile
+    PriorityQueue<HuffmanNode*> pqueue;
+    makePriorityQueue(pqueue, freqTable);
+    makeTree(pqueue);
+    
+    return pqueue.peek();   // this is just a placeholder so it will compile
 }
+
+void makeTree(PriorityQueue<HuffmanNode*>& pqueue) {
+    while (pqueue.size() > 1) {
+        // dequeue first two nodes, store in left and right
+        HuffmanNode* left = pqueue.dequeue();
+        HuffmanNode* right = pqueue.dequeue();
+        
+        // make new parent node with children attached
+        int countSum = left->count + right->count;
+        HuffmanNode* parent = new HuffmanNode(NOT_A_CHAR, countSum, left, right);
+        
+        // enqueue parent
+        pqueue.enqueue(parent, countSum);
+    }
+}
+
+void makePriorityQueue(PriorityQueue<HuffmanNode*>& pqueue, const Map<int, int>& freqTable) {
+    Vector<int> keys = freqTable.keys();
+    
+    for (int key : keys) {
+        HuffmanNode* node = new HuffmanNode(key, freqTable[key]);
+        pqueue.enqueue(node, freqTable[key]);
+    }
+}
+
 
 Map<int, string> buildEncodingMap(HuffmanNode* encodingTree) {
     // TODO: implement this function
